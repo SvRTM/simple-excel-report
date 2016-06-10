@@ -18,7 +18,7 @@
 package com.github.svrtm.xlreport;
 
 import static com.github.svrtm.xlreport.Row.RowOperation.CREATE;
-import static com.github.svrtm.xlreport.Row.RowOperation.GET_CREATE;
+import static com.github.svrtm.xlreport.Row.RowOperation.CREATE_and_GET;
 import static java.lang.String.format;
 import static java.util.Arrays.sort;
 
@@ -38,21 +38,21 @@ final public class Row<HB> {
     Map<Integer, Cell<HB>> cells = new HashMap<Integer, Cell<HB>>();
 
     enum RowOperation {
-        CREATE, GET, GET_CREATE
+        CREATE, GET, CREATE_and_GET
     }
 
     /**
-     * used in {@link Row#addAndBuildCells(int, int, ICallback)
+     * used in {@link Row#addAndConfigureCells(int, int, INewCell)
      * Row#addAndBuildCells(ICallback, int...) * }
      *
      * @author Artem.Smirnov
      */
-    public interface ICallback {
+    public interface INewCell<HB> {
         /**
-         * @param newCell
+         * @param cell
          *            - new cell
          */
-        void step(final Cell<?> newCell);
+        void iCell(final Cell<HB> cell);
     }
 
     Row(final ABuilder<HB> aBuilder) {
@@ -71,7 +71,7 @@ final public class Row<HB> {
 
         if (CREATE == rowOperation)
             poiRow = aBuilder.sheet.createRow(i);
-        else if (GET_CREATE == rowOperation)
+        else if (CREATE_and_GET == rowOperation)
             poiRow = aBuilder.sheet.createRow(i);
         else // GET
             throw new ReportBuilderException(
@@ -80,7 +80,7 @@ final public class Row<HB> {
     }
 
     @SuppressWarnings("unchecked")
-    public HB buildRow() {
+    public HB configureRow() {
         return (HB) builder;
     }
 
@@ -103,7 +103,7 @@ final public class Row<HB> {
      * @return
      */
     public Cell<HB> cellOrCreateIfAbsent(final int i) {
-        return createCell(i, CellOperation.GET_CREATE);
+        return createCell(i, CellOperation.CREATE_and_GET);
     }
 
     /**
@@ -113,7 +113,7 @@ final public class Row<HB> {
      *            - the column number this cell represents
      * @return
      */
-    public Cell<HB> addCell(final int i) {
+    public Cell<HB> prepareNewCell(final int i) {
         return createCell(i, CellOperation.CREATE);
     }
 
@@ -126,8 +126,8 @@ final public class Row<HB> {
      * @param callback
      * @return
      */
-    public Row<HB> addAndBuildCells(final int firstCell, final int lastCell,
-                                    final ICallback callback) {
+    public Row<HB> addAndConfigureCells(final int firstCell, final int lastCell,
+                                        final INewCell<HB> callback) {
         for (int i = firstCell; i <= lastCell; i++)
             callbackCell(i, callback);
         return this;
@@ -142,8 +142,8 @@ final public class Row<HB> {
      *            indexes of cells
      * @return
      */
-    public Row<HB> addAndBuildCells(final ICallback callback,
-                                    final int... indexesCells) {
+    public Row<HB> addAndConfigureCells(final INewCell<HB> callback,
+                                        final int... indexesCells) {
         for (final int i : indexesCells)
             callbackCell(i, callback);
         return this;
@@ -204,10 +204,10 @@ final public class Row<HB> {
         return cell;
     }
 
-    private void callbackCell(final int i, final ICallback callback) {
-        final Cell<HB> newCell = addCell(i);
-        callback.step(newCell);
-        newCell.buildCell();
+    private void callbackCell(final int i, final INewCell<HB> callback) {
+        final Cell<HB> newCell = prepareNewCell(i);
+        callback.iCell(newCell);
+        newCell.createCell();
     }
 
     /**
@@ -221,7 +221,7 @@ final public class Row<HB> {
 
         builder.sheet = builder.wb.createSheet();
         builder.header.sheet = builder.sheet;
-        builder.header.builder();
+        builder.header.prepareHeader();
 
         rowIndex = builder.sheet.getPhysicalNumberOfRows();
         return rowIndex;

@@ -2,183 +2,314 @@ package com.github.svrtm.xlreport.test;
 
 import java.io.FileOutputStream;
 
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
 import com.github.svrtm.xlreport.ACellStyle.Alignment;
+import com.github.svrtm.xlreport.Cell;
 import com.github.svrtm.xlreport.Report;
-import com.github.svrtm.xlreport.Report.AHeader;
 import com.github.svrtm.xlreport.Report.Body;
 import com.github.svrtm.xlreport.Report.Final;
 import com.github.svrtm.xlreport.Report.Header;
-import com.github.svrtm.xlreport.Row;
+import com.github.svrtm.xlreport.Row.INewCell;
 
 
 public class TestReportExcel97 {
 
     @Test
     public void testBigReport() throws Exception  {
-        final int nCell = 6;
-        final int nRow = 150000;
+        final int nMergedCells = 6;
+        final int countRows = 150000;
 
-        Header hr = Report.EXCEL97.createHeader();
-        Body bd =
-        hr.build(new Report.AHeader() {
-            public void builder() {
-                mergedRegion(0, 0, 0, nCell-1)
-                .addRow()
-                    .addCell(0)
-                        .withStyle()
-                        .buildStyle()
-                    .buildCell()
+        Body bd = Report.EXCEL97.instanceBody(
+        new Report.Header() {
+            public void prepareHeader() {
+                mergedRegion(0, 0, 0, nMergedCells-1)
+                .addNewRow()
+                    .prepareNewCell(0)
+                        .prepareStyle()
+                        .createStyle()
+                    .createCell()
                     .whereHeightInPointsIs(11)
-                .buildRow();
-                int nLastRow = getIndexOfLastRow();
+                .configureRow();
+                int nLastRow = indexOfLastRow();
 
-                addRow(2, new ICallback<AHeader>() {
-                    public void step(Row<AHeader> row) {
-                        for (int i = 0; i < nCell; i++) {
-                            row.addCell(i).buildCell();
-                        }
-                    }
-                })
+                addNewRowsWithEmptyCells(2, nMergedCells)
                 .mergedRegion(nLastRow, nLastRow + 1, 0, 0)
                 .mergedRegion(nLastRow, nLastRow + 1, 1, 1)
                 .mergedRegion(nLastRow, nLastRow, 2, 3)
                 .mergedRegion(nLastRow, nLastRow, 4, 5);
 
                 row(nLastRow)
-                    .addCell(0)
-                        .withValue("-=0=-").buildCell()
-                    .addCell(1)
-                        .withValue("-=1=-").buildCell()
-                    .addCell(2)
-                        .withValue("-=2=-").buildCell()
-                    .addCell(4)
-                        .withValue("-=3=-").buildCell()
+                    .prepareNewCell(0)
+                        .withValue("-=0=-").createCell()
+                    .prepareNewCell(1)
+                        .withValue("-=1=-").createCell()
+                    .prepareNewCell(2)
+                        .withValue("-=2=-").createCell()
+                    .prepareNewCell(4)
+                        .withValue("-=3=-").createCell()
                     .cells()
-                        .withStyle()
+                        .prepareStyle()
                             .header()
-                        .buildStyle()
+                        .createStyle()
                         .whereColumnWidthIs(16)
-                    .buildCells()
+                    .configureCells()
                     .whereHeightInPointsIs(45)
-                .buildRow()
+                .configureRow()
                 .row(nLastRow+1)
-                    .addCell(2)
-                        .withValue("-=2.1=-").buildCell()
-                    .addCell(3)
-                        .withValue("-=2.2=-").buildCell()
-                    .addCell(4)
-                        .withValue("-=3.1=-").buildCell()
-                    .addCell(5)
-                        .withValue("-=3.2=-").buildCell()
+                    .prepareNewCell(2)
+                        .withValue("-=2.1=-").createCell()
+                    .prepareNewCell(3)
+                        .withValue("-=2.2=-").createCell()
+                    .prepareNewCell(4)
+                        .withValue("-=3.1=-").createCell()
+                    .prepareNewCell(5)
+                        .withValue("-=3.2=-").createCell()
                     .cells()
-                        .withStyle()
+                        .prepareStyle()
                             .header()
-                        .buildStyle()
+                        .createStyle()
                         .whereColumnWidthIs(16)
-                    .buildCells()
+                    .configureCells()
                     .whereHeightInPointsIs(45)
-                .buildRow()
-                .addRow()
-                    .addCells(nCell)
+                .configureRow()
+                .addNewRow()
+                    .addCells(nMergedCells)
                         .withInitialValueOfIncrement(1)
-                    .buildCells()
+                    .configureCells()
                     .cells()
-                        .withStyle()
+                        .prepareStyle()
                             .header()
-                        .buildStyle()
-                    .buildCells()
-                .buildRow()
-                .whereiColumnWidthIs(1, 35)
+                        .createStyle()
+                    .configureCells()
+                .configureRow()
+                .iColumnWidthIs(1, 35)
             ;
             }
         });
 
-        for (int i = 0; i < nRow; i++) {
+        for (int i = 0; i < countRows; i++) {
             bd
-                .addRow()
-                    .addCell(0)
+                .addNewRow()
+                    .prepareNewCell(0)
                         .withValue(i)
-                    .buildCell()
-                    .addCell(1)
+                    .createCell()
+                    .prepareNewCell(1)
                         .withValue("str -> " + i)
-                    .buildCell()
-                    .addCell(2)
+                    .createCell()
+                    .prepareNewCell(2)
                         .withValue(123.45 + i)
-                        .toDecimalFormat()
-                    .buildCell()
-                    .addCell(3)
+                        .useDecimalFormat()
+                    .createCell()
+                    .prepareNewCell(3)
                         .withValue(345.55 + i)
-                    .buildCell()
-                    .addCell(4)
+                    .createCell()
+                    .prepareNewCell(4)
                         .withValue(456.54 + i)
-                    .buildCell()
-                    .addCell(5)
+                    .createCell()
+                    .prepareNewCell(5)
                         .withValue(567.75 + i)
-                    .buildCell()
+                    .createCell()
                     .cells()
-                        .withStyle()
-                            .defaultBorder()
+                        .prepareStyle()
+                            .defaultEdging()
                             .alignment(Alignment.RIGHT)
-                        .buildStyle()
-                    .buildCells()
+                        .createStyle()
+                    .configureCells()
                 ;
         }
         bd.withAutoSizeColumn(1).withAutoSizeColumn(2).withAutoSizeColumn(4);
 
-        int iLastRow = bd.getIndexOfLastRow();
+        int iLastRow = bd.indexOfLastRow();
         Final report =
         bd
             .mergedRegion(iLastRow, iLastRow, 0, 1)
-            .addRow()
-                .addCell(0)
+            .addNewRow()
+                .prepareNewCell(0)
                     .withValue("-==-")
-                .buildCell()
-                .addCell(1)
-                .buildCell()
-                .addCell(2)
+                .createCell()
+                .prepareNewCell(1)
+                .createCell()
+                .prepareNewCell(2)
                     .withValue(1234567.23)
-                    .toDecimalFormat()
-                    .withStyle()
-                        .defaultBorder()
+                    .useDecimalFormat()
+                    .prepareStyle()
+                        .defaultEdging()
                         .alignment(Alignment.RIGHT)
-                    .buildStyle()
-                .buildCell()
-                .addCell(3)
+                    .createStyle()
+                .createCell()
+                .prepareNewCell(3)
                     .withValue(786541.55)
-                    .withStyle()
-                        .defaultBorder()
+                    .prepareStyle()
+                        .defaultEdging()
                         .alignment(Alignment.RIGHT)
-                    .buildStyle()
-                .buildCell()
-                .addCell(4)
+                    .createStyle()
+                .createCell()
+                .prepareNewCell(4)
                     .withValue(4453306.45)
-                    .withStyle()
-                        .defaultBorder()
+                    .prepareStyle()
+                        .defaultEdging()
                         .alignment(Alignment.RIGHT)
-                    .buildStyle()
-                .buildCell()
-                .addCell(5)
+                    .createStyle()
+                .createCell()
+                .prepareNewCell(5)
                     .withValue(500567.75)
-                    .withStyle()
-                        .defaultBorder()
+                    .prepareStyle()
+                        .defaultEdging()
                         .alignment(Alignment.RIGHT)
-                    .buildStyle()
-                .buildCell()
+                    .createStyle()
+                .createCell()
                 .cells()
-                    .withStyle()
-                        .defaultBorder()
+                    .prepareStyle()
+                        .defaultEdging()
                         .alignment(Alignment.CENTER)
-                    .buildStyle()
-                .buildCells()
-           .buildRow()
-       .build()
-;
+                    .createStyle()
+                .configureCells()
+           .configureRow()
+        .instanceFinal();
+
         Workbook wb = report.getWorkbook();
-        FileOutputStream out = new FileOutputStream("target/workbook.xls");
+        FileOutputStream out = new FileOutputStream("target/bigReport.xls");
         wb.write(out);
         out.close();
+    }
+
+    @Test
+    public void testXLReport_3() throws Exception {
+        final String[] headerValueCells = { "Header 1", "Header 2",
+                                            "Header 3", "Header 4",
+                                            //
+                                            "Header 2.1", "Header 2.2",
+                                            "Header 2.3" };
+
+        final int firstDataCell = 4;
+        final int secondDataCell = 3;
+        final int iColumns[] = { 0, 1, 2, 3, 5, 6, 7 };
+
+        Body bd = Report.EXCEL97.instanceBody(
+        new Report.Header() {
+            public void prepareHeader() {
+                replaceColor(IndexedColors.MAROON, (byte) 203, (byte) 234, (byte) 220)
+                .replaceColor(IndexedColors.PINK, (byte) 0xC5, (byte) 0xD9, (byte) 0xF1)
+                .mergedRegion(0, 0, 0, firstDataCell + secondDataCell)
+                .mergedRegion(1, 1, 0, firstDataCell - 1)
+                .mergedRegion(1, 1, firstDataCell + 1, firstDataCell + 1 + secondDataCell - 1)
+                .addNewRow()
+                    .prepareNewCell(0)
+                        .withValue("Title 1")
+                        .prepareStyle()
+                            .title()
+                            .headerWithForegroundColor(IndexedColors.MAROON)
+                            .addFont()
+                                .color(IndexedColors.DARK_RED)
+                            .configureFont()
+                        .createStyle()
+                    .createCell()
+                    .whereHeightInPointsIs(65)
+                    .cells()
+                        .prepareStyle()
+                            .title()
+                            .header()
+                        .createStyle()
+                    .configureCells()
+                .configureRow()
+                .addNewRow()
+                    .prepareNewCell(0)
+                        .withValue("Title 2")
+                    .createCell()
+                    .prepareNewCell(firstDataCell + 1)
+                        .withValue("Title 3")
+                    .createCell()
+                    .whereHeightInPointsIs(30)
+                    .cells()
+                        .prepareStyle()
+                            .title()
+                            .headerWithForegroundColor(IndexedColors.PINK)
+                        .createStyle()
+                    .configureCells()
+                .configureRow()
+                .iColumnWidthIs(0, 28)
+                .iColumnWidthIs(1, 14)
+                .iColumnWidthIs(2, 18)
+                .iColumnWidthIs(3, 20)
+                .iColumnWidthIs(5, 25)
+                .iColumnWidthIs(6, 25)
+                .iColumnWidthIs(7, 25)
+                //
+                .addNewRow()
+                    .addAndConfigureCells(new INewCell<Header>() {
+                        private int i = 0;
+
+                        public void iCell(final Cell<Header> newCell) {
+                            newCell.withValue(headerValueCells[i++]);
+                        }
+                    }, iColumns)
+                    .cells()
+                        .prepareStyle()
+                            .header()
+                        .createStyle()
+                    .configureCells()
+                    .whereHeightInPointsIs(45)
+                .configureRow()
+                //
+                .addNewRow()
+                    .addCells(iColumns)
+                        .withInitialValueOfIncrement(1)
+                        .prepareStyle()
+                            .header()
+                        .createStyle()
+                    .configureCells()
+                .configureRow()
+                //
+                ;
+            }
+        });
+
+        for (int i = 0; i < 100; i++)
+            bd
+            .addNewRow()
+                .prepareNewCell(0)
+                    .withValue("a")
+                    .prepareStyle()
+                        .alignment(Alignment.CENTER)
+                        .defaultEdging()
+                    .createStyle()
+                .createCell()
+                .prepareNewCell(1)
+                    .withValue("s")
+                .createCell()
+                .prepareNewCell(2)
+                    .withValue("d")
+                .createCell()
+                .prepareNewCell(3)
+                    .withValue(i)
+                    .useDecimalFormat()
+                .createCell()
+                //
+                .prepareNewCell(5)
+                    .withValue("q")
+                .createCell()
+                .prepareNewCell(6)
+                    .withValue(i)
+                    .useDecimalFormat()
+                .createCell()
+                .prepareNewCell(7)
+                    .withValue("w")
+                .createCell()
+                .cells()
+                    .prepareStyle()
+                        .defaultEdging()
+                        .alignment(Alignment.RIGHT)
+                    .createStyle()
+                .configureCells()
+            .configureRow();
+
+        final Final report = bd.instanceFinal();
+        final Workbook wb = report.getWorkbook();
+        final FileOutputStream fout = new FileOutputStream("target/colorReport.xls");
+        wb.write(fout);
+        fout.close();
     }
 }

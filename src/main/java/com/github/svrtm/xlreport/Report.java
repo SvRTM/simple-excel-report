@@ -30,13 +30,15 @@ public enum Report {
 
     EXCEL97 {
         @Override
-        final public Header createHeader() {
-            return new Header(new HSSFWorkbook(),
+        final public Body instanceBody(final Header header) {
+            header.init(new HSSFWorkbook(),
                     SpreadsheetVersion.EXCEL97.getLastRowIndex());
+            header.prepareHeader();
+            return new Body(header);
         }
 
         @Override
-        final public Body createBody() {
+        final public Body instanceBody() {
             return new Body(new HSSFWorkbook(),
                     SpreadsheetVersion.EXCEL97.getLastRowIndex());
         }
@@ -53,13 +55,15 @@ public enum Report {
         private static final int ROW_ACCESS_WINDOW_SIZE = 10000;
 
         @Override
-        final public Header createHeader() {
-            return new Header(new SXSSFWorkbook(ROW_ACCESS_WINDOW_SIZE),
+        final public Body instanceBody(final Header header) {
+            header.init(new SXSSFWorkbook(ROW_ACCESS_WINDOW_SIZE),
                     SpreadsheetVersion.EXCEL2007.getLastRowIndex());
+            header.prepareHeader();
+            return new Body(header);
         }
 
         @Override
-        final public Body createBody() {
+        final public Body instanceBody() {
             return new Body(new SXSSFWorkbook(ROW_ACCESS_WINDOW_SIZE),
                     SpreadsheetVersion.EXCEL2007.getLastRowIndex());
         }
@@ -67,19 +71,21 @@ public enum Report {
 
     EXCEL2007_NEW {
         @Override
-        final public Header createHeader() {
-            return new Header(new XSSFWorkbook(), -1);
+        final public Body instanceBody(final Header header) {
+            header.init(new XSSFWorkbook(), -1);
+            header.prepareHeader();
+            return new Body(header);
         }
 
         @Override
-        final public Body createBody() {
+        final public Body instanceBody() {
             return new Body(new XSSFWorkbook(), -1);
         }
     };
 
-    public abstract Header createHeader();
+    public abstract Body instanceBody(final Header header);
 
-    public abstract Body createBody();
+    public abstract Body instanceBody();
 
     //
     //
@@ -98,42 +104,25 @@ public enum Report {
     //
     //
     private interface IHeader {
-        void builder();
+        void prepareHeader();
     }
 
-    public static abstract class AHeader extends ABuilder<AHeader>
+    public static abstract class Header extends ABuilder<Header>
             implements IHeader {}
-
-    final public class Header {
-        private final Workbook wb;
-        private final int maxrow;
-
-        private Header(final Workbook wb, final int maxrow) {
-            this.wb = wb;
-            this.maxrow = maxrow;
-        }
-
-        public Body build(final AHeader header) {
-            header.init(wb, maxrow);
-
-            header.builder();
-            return new Body(header);
-        }
-    }
 
     //
     //
     final public class Body extends ABuilder<Body> {
 
-        public Body(final Workbook wb, final int maxrow) {
+        private Body(final Workbook wb, final int maxrow) {
             init(wb, maxrow);
         }
 
-        private Body(final AHeader header) {
+        private Body(final Header header) {
             init(header);
         }
 
-        private void init(final AHeader header) {
+        private void init(final Header header) {
             this.header = header;
             maxrow = header.maxrow;
 
@@ -145,7 +134,7 @@ public enum Report {
             cacheDataFormat = header.cacheDataFormat;
         }
 
-        public Final build() {
+        public Final instanceFinal() {
             return new Final(this);
         }
     }

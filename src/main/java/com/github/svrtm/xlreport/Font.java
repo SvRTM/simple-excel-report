@@ -17,6 +17,8 @@
  */
 package com.github.svrtm.xlreport;
 
+import org.apache.poi.ss.usermodel.IndexedColors;
+
 /**
  * @author Artem.Smirnov
  */
@@ -26,29 +28,30 @@ final public class Font<T extends ACellStyle<?, ?>> {
 
     final private Font_p font_p;
 
+    public enum Boldweight {
+        /** */
+        NORMAL(org.apache.poi.ss.usermodel.Font.BOLDWEIGHT_NORMAL),
+        /** */
+        BOLD(org.apache.poi.ss.usermodel.Font.BOLDWEIGHT_BOLD);
+
+        short idx;
+
+        private Boldweight(final short idx) {
+            this.idx = idx;
+        }
+    }
+
     Font(final T cellStyle) {
         this.cellStyle = cellStyle;
         this.builder = cellStyle.builder;
         font_p = new Font_p();
     }
 
-    public T buildFont() {
+    public T configureFont() {
         getFont();
         cellStyle.cellStyle_p.font_p = font_p;
 
         return cellStyle;
-    }
-
-    org.apache.poi.ss.usermodel.Font getFont() {
-        org.apache.poi.ss.usermodel.Font poiFont =
-                                                 builder.cacheFont.get(font_p);
-        if (poiFont == null) {
-            poiFont = cellStyle.wb.createFont();
-            font_p.copyTo(poiFont);
-            builder.cacheFont.put(font_p, poiFont);
-        }
-
-        return poiFont;
     }
 
     public Font<T> heightInPoints(final short height) {
@@ -56,8 +59,8 @@ final public class Font<T extends ACellStyle<?, ?>> {
         return this;
     }
 
-    public Font<T> color(final short i) {
-        font_p.setColor(i);
+    public Font<T> color(final IndexedColors color) {
+        font_p.setColor(color.index);
         return this;
     }
 
@@ -66,8 +69,20 @@ final public class Font<T extends ACellStyle<?, ?>> {
         return this;
     }
 
-    public Font<T> boldweight(final short boldweight) {
-        font_p.setBoldweight(boldweight);
+    public Font<T> boldweight(final Boldweight boldweight) {
+        font_p.setBoldweight(boldweight.idx);
         return this;
+    }
+
+    private org.apache.poi.ss.usermodel.Font getFont() {
+        org.apache.poi.ss.usermodel.Font poiFont;
+        poiFont = builder.cacheFont.get(font_p);
+        if (poiFont == null) {
+            poiFont = cellStyle.wb.createFont();
+            font_p.copyTo(poiFont);
+            builder.cacheFont.put(font_p, poiFont);
+        }
+
+        return poiFont;
     }
 }

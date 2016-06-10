@@ -68,10 +68,9 @@ public abstract class ACell<T, HB> {
                 mergedCells = new ArrayList<Cell>(region.getNumberOfCells());
                 for (rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
                     final Row<HB> row = builder.rowOrCreateIfAbsent(rowIndex);
-                    for (int colIndex =
-                                      firstCol; colIndex <= lastCol; colIndex++) {
-                        final Cell mergedCell = row
-                                .cellOrCreateIfAbsent(colIndex).poiCell;
+                    for (int colIdx = firstCol; colIdx <= lastCol; colIdx++) {
+                        final Cell mergedCell;
+                        mergedCell = row.cellOrCreateIfAbsent(colIdx).poiCell;
                         mergedCells.add(mergedCell);
                     }
                 }
@@ -90,7 +89,7 @@ public abstract class ACell<T, HB> {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public T withAutoSizeColumn() {
+    public T useAutoSizeColumn() {
         enableAutoSize = true;
         return (T) this;
     }

@@ -1,6 +1,6 @@
 /**
  * <pre>
- * Copyright © 2012 Artem Smirnov
+ * Copyright © 2012,2016 Artem Smirnov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ final public class CellStyle<HB> extends ACellStyle<CellStyle<HB>, Cell<HB>> {
     }
 
     @Override
-    public Cell<HB> buildStyle() {
+    public Cell<HB> createStyle() {
         final org.apache.poi.ss.usermodel.CellStyle poiStyle = getStyle();
         cell.poiCell.setCellStyle(poiStyle);
 

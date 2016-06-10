@@ -18,7 +18,7 @@
 package com.github.svrtm.xlreport;
 
 import static com.github.svrtm.xlreport.Cell.CellOperation.CREATE;
-import static com.github.svrtm.xlreport.Cell.CellOperation.GET_CREATE;
+import static com.github.svrtm.xlreport.Cell.CellOperation.CREATE_and_GET;
 import static java.lang.String.format;
 import static java.util.Locale.ENGLISH;
 import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC;
@@ -29,6 +29,7 @@ import java.math.RoundingMode;
 import java.text.NumberFormat;
 
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.RichTextString;
 
 /**
  * @author Artem.Smirnov
@@ -40,7 +41,7 @@ final public class Cell<HB> extends ACell<Cell<HB>, HB> {
     final org.apache.poi.ss.usermodel.Cell poiCell;
 
     enum CellOperation {
-        CREATE, GET, GET_CREATE
+        CREATE, GET, CREATE_and_GET
     }
 
     Cell(final Row<HB> row, final int i, final CellOperation cellOperation) {
@@ -51,12 +52,12 @@ final public class Cell<HB> extends ACell<Cell<HB>, HB> {
         if (CREATE == cellOperation)
             poiCell = poiRow.createCell(i);
         else
-            poiCell = GET_CREATE == cellOperation
+            poiCell = CREATE_and_GET == cellOperation
                       && poiRow.getCell(i) == null ? poiRow.createCell(i)
                                                    : poiRow.getCell(i);
     }
 
-    public Row<HB> buildCell() {
+    public Row<HB> createCell() {
         if (decimalFormat)
             valueWithDecimalFormat();
         else if (bigDecimalValue != null)
@@ -68,7 +69,7 @@ final public class Cell<HB> extends ACell<Cell<HB>, HB> {
     }
 
     @SuppressWarnings("unchecked")
-    public CellStyle<HB> withStyle() {
+    public CellStyle<HB> prepareStyle() {
         if (cellStyle == null)
             cellStyle = new CellStyle<HB>(this);
         return (CellStyle<HB>) cellStyle;
@@ -81,6 +82,11 @@ final public class Cell<HB> extends ACell<Cell<HB>, HB> {
 
     public Cell<HB> withRichText(final String value) {
         poiCell.setCellValue(creationHelper.createRichTextString(value));
+        return this;
+    }
+
+    public Cell<HB> withRichText(final RichTextString value) {
+        poiCell.setCellValue(value);
         return this;
     }
 
@@ -111,7 +117,10 @@ final public class Cell<HB> extends ACell<Cell<HB>, HB> {
      * @return
      */
     public Cell<HB> withValue(final Object value) {
-        if (value instanceof String)
+        if (value == null)
+            throw new ReportBuilderException("Value cannot be null");
+
+        else if (value instanceof String)
             withValue((String) value);
         else if (value instanceof Long)
             withValue(((Long) value).longValue());
@@ -135,7 +144,7 @@ final public class Cell<HB> extends ACell<Cell<HB>, HB> {
      * @return this
      * @see ACellStyle#dataFormat(String)
      */
-    public Cell<HB> toDecimalFormat() {
+    public Cell<HB> useDecimalFormat() {
         decimalFormat = true;
         return this;
     }

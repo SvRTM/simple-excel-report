@@ -1,6 +1,6 @@
 /**
  * <pre>
- * Copyright © 2012 Artem Smirnov
+ * Copyright © 2012,2016 Artem Smirnov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,14 +37,14 @@ final public class Cells<HB> extends ACell<Cells<HB>, HB> {
         this.indexesCells = indexesCells;
     }
 
-    public Row<HB> buildCells() {
+    public Row<HB> configureCells() {
         if (columnWidth == -1 && incrementValue == -1 && cellStyle == null)
             return row;
 
         int increment = incrementValue;
         for (final int i : indexesCells) {
             if (row.cells.get(i) == null)
-                row.addCell(i).buildCell();
+                row.prepareNewCell(i).createCell();
 
             final org.apache.poi.ss.usermodel.Row poiRow = row.poiRow;
             final Cell poiCell = poiRow.getCell(i);
@@ -83,7 +83,7 @@ final public class Cells<HB> extends ACell<Cells<HB>, HB> {
      * @return The object {@link CellsStyle}
      */
     @SuppressWarnings("unchecked")
-    public CellsStyle<HB> withStyle() {
+    public CellsStyle<HB> prepareStyle() {
         if (cellStyle == null)
             cellStyle = new CellsStyle<HB>(this);
         return (CellsStyle<HB>) cellStyle;

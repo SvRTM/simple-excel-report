@@ -21,7 +21,6 @@ package com.github.svrtm.xlreport;
  * @author Artem.Smirnov
  */
 final class Font_p {
-
     private short fontHeightInPoints;
     private short color;
     private boolean italic;

@@ -23,7 +23,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
  * @author Artem.Smirnov
  */
 final class CellStyle_p {
-
     private short verticalAlignment;
     private short alignment;
 

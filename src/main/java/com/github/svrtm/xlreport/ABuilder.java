@@ -18,8 +18,8 @@
 package com.github.svrtm.xlreport;
 
 import static com.github.svrtm.xlreport.Row.RowOperation.CREATE;
+import static com.github.svrtm.xlreport.Row.RowOperation.CREATE_and_GET;
 import static com.github.svrtm.xlreport.Row.RowOperation.GET;
-import static com.github.svrtm.xlreport.Row.RowOperation.GET_CREATE;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
@@ -31,17 +31,18 @@ import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import com.github.svrtm.xlreport.Report.AHeader;
+import com.github.svrtm.xlreport.Report.Header;
 
 /**
  * @author Artem.Smirnov
  */
 public abstract class ABuilder<HB> {
-    AHeader header;
+    Header header;
 
     Workbook wb;
     Sheet sheet;
@@ -67,16 +68,16 @@ public abstract class ABuilder<HB> {
     }
 
     /**
-     * used in {@link ABuilder#addRow(int, ABuilder.ICallback)}
+     * used in {@link ABuilder#addNewnRows(int, ABuilder.INewRow)}
      *
      * @author Artem.Smirnov
      */
-    public interface ICallback<HB> {
+    public interface INewRow<HB> {
         /**
          * @param row
          *            - new row
          */
-        void step(final Row<HB> row);
+        void iRow(final Row<HB> row);
     }
 
     /**
@@ -85,8 +86,28 @@ public abstract class ABuilder<HB> {
      *
      * @return
      */
-    public Row<HB> addRow() {
+    public Row<HB> addNewRow() {
         return new Row<HB>(this);
+    }
+
+    /**
+     * Create a new rows with empty cells
+     *
+     * @param nRows
+     *            - number of new created rows
+     * @param nCells
+     *            - number of new empty cells
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public HB addNewRowsWithEmptyCells(final int nRows, final int nCells) {
+        for (int iRow = 0; iRow < nRows; iRow++) {
+            final Row<HB> r = addNewRow();
+            for (int iCell = 0; iCell < nCells; iCell++)
+                r.prepareNewCell(iCell).createCell();
+            r.configureRow();
+        }
+        return (HB) this;
     }
 
     /**
@@ -110,9 +131,9 @@ public abstract class ABuilder<HB> {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public HB addRow(final int nRow, final ICallback<HB> callback) {
+    public HB addNewnRows(final int nRow, final INewRow<HB> callback) {
         for (int i = 0; i < nRow; i++)
-            callback.step(addRow());
+            callback.iRow(addNewRow());
         return (HB) this;
     }
 
@@ -128,7 +149,7 @@ public abstract class ABuilder<HB> {
     }
 
     Row<HB> rowOrCreateIfAbsent(final int i) {
-        return new Row<HB>(this, i, GET_CREATE);
+        return new Row<HB>(this, i, CREATE_and_GET);
     }
 
     /**
@@ -137,7 +158,7 @@ public abstract class ABuilder<HB> {
      *
      * @return the number of physically defined rows in this sheet
      */
-    public int getIndexOfLastRow() {
+    public int indexOfLastRow() {
         return sheet.getPhysicalNumberOfRows();
     }
 
@@ -173,7 +194,7 @@ public abstract class ABuilder<HB> {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public HB whereiColumnWidthIs(final int columnIndex, final int width) {
+    public HB iColumnWidthIs(final int columnIndex, final int width) {
         sheet.setColumnWidth(columnIndex, width * 256);
         return (HB) this;
     }
@@ -186,7 +207,7 @@ public abstract class ABuilder<HB> {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public HB whereiColumnsWidthIs(final int widthColumns[][]) {
+    public HB columnWidths(final int widthColumns[][]) {
         for (final int[] is : widthColumns)
             sheet.setColumnWidth(is[0], is[1] * 256);
 
@@ -207,8 +228,8 @@ public abstract class ABuilder<HB> {
      * @return this
      */
     @SuppressWarnings("unchecked")
-    public HB replaceColor(final short i, final byte red, final byte green,
-                           final byte blue) {
+    public HB replaceColor(final IndexedColors color, final byte red,
+                           final byte green, final byte blue) {
         if (!(wb instanceof HSSFWorkbook))
             throw new ReportBuilderException(
                     format("This operation is not supported for workbook %s",
@@ -216,7 +237,7 @@ public abstract class ABuilder<HB> {
 
         final HSSFWorkbook hssfwb = (HSSFWorkbook) wb;
         final HSSFPalette palette = hssfwb.getCustomPalette();
-        palette.setColorAtIndex(i, red, green, blue);
+        palette.setColorAtIndex(color.index, red, green, blue);
 
         return (HB) this;
     }

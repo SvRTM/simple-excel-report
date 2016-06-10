@@ -21,16 +21,13 @@ import static com.github.svrtm.xlreport.ACellStyle.Alignment.CENTER;
 import static com.github.svrtm.xlreport.ACellStyle.Alignment.VERTICAL_CENTER;
 import static org.apache.poi.ss.usermodel.CellStyle.ALIGN_LEFT;
 import static org.apache.poi.ss.usermodel.CellStyle.BORDER_THIN;
-import static org.apache.poi.ss.usermodel.CellStyle.SOLID_FOREGROUND;
-import static org.apache.poi.ss.usermodel.Font.BOLDWEIGHT_BOLD;
 import static org.apache.poi.ss.usermodel.IndexedColors.BLACK;
 
-import org.apache.poi.hssf.util.HSSFColor.AQUA;
-import org.apache.poi.hssf.util.HSSFColor.BLUE;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
+
+import com.github.svrtm.xlreport.Font.Boldweight;
 
 /**
  * @author Artem.Smirnov
@@ -40,46 +37,76 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
     final ABuilder<?> builder;
 
     final Workbook wb;
-    final Row poiRow;
 
     final CellStyle_p cellStyle_p;
 
     public enum Alignment {
-        /**
-         *
-         */
-        CENTER(CellStyle.ALIGN_CENTER, AlignmentType.G),
-        /**
-         *
-         */
-        RIGHT(CellStyle.ALIGN_RIGHT, AlignmentType.G),
-        /**
-         *
-         */
-        LEFT(ALIGN_LEFT, AlignmentType.G),
-        /**
-         *
-         */
+        /** */
+        CENTER(CellStyle.ALIGN_CENTER, AlignmentType.H),
+        /** */
+        RIGHT(CellStyle.ALIGN_RIGHT, AlignmentType.H),
+        /** */
+        LEFT(ALIGN_LEFT, AlignmentType.H),
+        /** */
         VERTICAL_CENTER(CellStyle.VERTICAL_CENTER, AlignmentType.V);
 
         private enum AlignmentType {
-            G, V
+            H, V
         };
 
-        short code;
-        AlignmentType alignmentType;
+        short idx;
+        private AlignmentType alignmentType;
 
-        private Alignment(final short code, final AlignmentType alignmentType) {
-            this.code = code;
+        private Alignment(final short idx, final AlignmentType alignmentType) {
+            this.idx = idx;
             this.alignmentType = alignmentType;
-        }
-
-        public short getCode() {
-            return code;
         }
 
         public AlignmentType getAlignmentType() {
             return alignmentType;
+        }
+    }
+
+    public enum FillPattern {
+        /** */
+        NO_FILL(CellStyle.NO_FILL),
+        /** */
+        SOLID_FOREGROUND(CellStyle.SOLID_FOREGROUND),
+        /** */
+        FINE_DOTS(CellStyle.FINE_DOTS),
+        /** */
+        ALT_BARS(CellStyle.ALT_BARS),
+        /** */
+        SPARSE_DOTS(CellStyle.SPARSE_DOTS),
+        /** */
+        THICK_HORZ_BANDS(CellStyle.THICK_HORZ_BANDS),
+        /** */
+        THICK_VERT_BANDS(CellStyle.THICK_VERT_BANDS),
+        /** */
+        THICK_BACKWARD_DIAG(CellStyle.THICK_BACKWARD_DIAG),
+        /** */
+        THICK_FORWARD_DIAG(CellStyle.THICK_FORWARD_DIAG),
+        /** */
+        BIG_SPOTS(CellStyle.BIG_SPOTS),
+        /** */
+        BRICKS(CellStyle.BRICKS),
+        /** */
+        THIN_HORZ_BANDS(CellStyle.THIN_HORZ_BANDS),
+        /** */
+        THIN_VERT_BANDS(CellStyle.THIN_VERT_BANDS),
+        /** */
+        THIN_BACKWARD_DIAG(CellStyle.THIN_BACKWARD_DIAG),
+        /** */
+        THIN_FORWARD_DIAG(CellStyle.THIN_FORWARD_DIAG),
+        /** */
+        SQUARES(CellStyle.SQUARES),
+        /** */
+        DIAMONDS(CellStyle.DIAMONDS);
+
+        short idx;
+
+        private FillPattern(final short idx) {
+            this.idx = idx;
         }
     }
 
@@ -88,11 +115,10 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
         this.builder = cell.builder;
         this.wb = cell.builder.sheet.getWorkbook();
 
-        this.poiRow = cell.row.poiRow;
         cellStyle_p = new CellStyle_p();
     }
 
-    public abstract HB buildStyle();
+    public abstract HB createStyle();
 
     CellStyle getStyle() {
         CellStyle poiStyle = builder.cacheCellStyle.get(cellStyle_p);
@@ -101,8 +127,8 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
             cellStyle_p.copyTo(poiStyle);
             final Font_p fontWrapper = cellStyle_p.font_p;
             if (fontWrapper != null) {
-                final org.apache.poi.ss.usermodel.Font font = builder.cacheFont
-                        .get(fontWrapper);
+                final org.apache.poi.ss.usermodel.Font font;
+                font = builder.cacheFont.get(fontWrapper);
                 poiStyle.setFont(font);
             }
             builder.cacheCellStyle.put(cellStyle_p, poiStyle);
@@ -114,15 +140,20 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
     @SuppressWarnings("unchecked")
     public T alignment(final Alignment alignment) {
         if (Alignment.AlignmentType.V == alignment.getAlignmentType())
-            cellStyle_p.setVerticalAlignment(alignment.getCode());
+            cellStyle_p.setVerticalAlignment(alignment.idx);
         else
-            cellStyle_p.setAlignment(alignment.getCode());
+            cellStyle_p.setAlignment(alignment.idx);
 
         return (T) this;
     }
 
+    /**
+     * Edging of a cell of black color
+     *
+     * @return
+     */
     @SuppressWarnings("unchecked")
-    public T defaultBorder() {
+    public T defaultEdging() {
         cellStyle_p.setBorderBottom(BORDER_THIN);
         cellStyle_p.setBottomBorderColor(BLACK.getIndex());
         cellStyle_p.setBorderLeft(BORDER_THIN);
@@ -142,14 +173,14 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
     }
 
     @SuppressWarnings("unchecked")
-    public T pattern(final short i) {
-        cellStyle_p.setFillPattern(i);
+    public T fillPattern(final FillPattern fp) {
+        cellStyle_p.setFillPattern(fp.idx);
         return (T) this;
     }
 
     @SuppressWarnings("unchecked")
-    public T foregroundColor(final short i) {
-        cellStyle_p.setFillForegroundColor(i);
+    public T fillForegroundColor(final IndexedColors color) {
+        cellStyle_p.setFillForegroundColor(color.index);
         return (T) this;
     }
 
@@ -170,61 +201,98 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
         return new Font<T>((T) this);
     }
 
+    /**
+     * Prepared style for title
+     * Set values of style:
+     * center alignment of a horizontal and vertical
+     * edging of a cell of black color
+     * font size of 11pt, bold weight
+     *
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public T title() {
         alignment(CENTER);
         alignment(VERTICAL_CENTER);
-        defaultBorder();
-        addFont().heightInPoints((short) 11).boldweight(BOLDWEIGHT_BOLD)
-                .buildFont();
         wrapText();
+        defaultEdging();
+        addFont().heightInPoints((short) 11).boldweight(Boldweight.BOLD)
+                .configureFont();
 
         return (T) this;
     }
 
+    /**
+     * Prepared style for header
+     * Set values of style:
+     * center alignment of a horizontal and vertical
+     * wrapped text
+     * edging of a cell of black color
+     * font size of 10pt, bold weight, black color
+     *
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public T header() {
         alignment(CENTER);
         alignment(VERTICAL_CENTER);
         wrapText();
-        defaultBorder();
-        addFont().heightInPoints((short) 10)
-                .color(IndexedColors.BLACK.getIndex())
-                .boldweight(BOLDWEIGHT_BOLD).buildFont();
+        defaultEdging();
+        addFont().heightInPoints((short) 10).color(IndexedColors.BLACK)
+                .boldweight(Boldweight.BOLD).configureFont();
 
         return (T) this;
     }
 
     /**
-     * Header style with the blue color
+     * Prepared style with fill foreground color for header
+     * Set values of style:
+     * center alignment of a horizontal and vertical
+     * wrapped text
+     * edging of a cell of black color
+     * font size of 10pt, bold weight, black color
      *
      * @return this
      */
     @SuppressWarnings("unchecked")
-    public T headerWithColor() {
-        header().foregroundColor(BLUE.index).pattern(SOLID_FOREGROUND);
+    public T headerWithForegroundColor(final IndexedColors color) {
+        header();
+        fillForegroundColor(color).fillPattern(FillPattern.SOLID_FOREGROUND);
         return (T) this;
     }
 
+    /**
+     * Prepared style for 'Total' cell/s
+     * Set values of style:
+     * horizontal alignment
+     * edging of a cell of black color
+     * font size of 10pt, bold weight, black color, italic
+     *
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public T total() {
         alignment(CENTER);
-        defaultBorder();
-        addFont().heightInPoints((short) 10)
-                .color(IndexedColors.BLACK.getIndex()).italic()
-                .boldweight(BOLDWEIGHT_BOLD).buildFont();
+        defaultEdging();
+        addFont().heightInPoints((short) 10).color(IndexedColors.BLACK).italic()
+                .boldweight(Boldweight.BOLD).configureFont();
 
         return (T) this;
     }
 
     /**
-     * Total style with the aqua color
+     * Prepared style with fill foreground color for 'Total' cell/s
+     * Set values of style:
+     * horizontal alignment
+     * edging of a cell of black color
+     * font size of 10pt, bold weight, black color, italic
      *
      * @return this
      */
     @SuppressWarnings("unchecked")
-    public T totalWithColor() {
-        total().foregroundColor(AQUA.index).pattern(SOLID_FOREGROUND);
+    public T totalWithForegroundColor(final IndexedColors fg) {
+        total();
+        fillForegroundColor(fg).fillPattern(FillPattern.SOLID_FOREGROUND);
         return (T) this;
     }
 
