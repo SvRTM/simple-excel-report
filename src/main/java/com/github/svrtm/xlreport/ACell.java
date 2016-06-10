@@ -26,7 +26,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 /**
  * @author Artem.Smirnov
  */
-public abstract class ACell<T, HB> {
+public abstract class ACell<HB, TC> {
     private static int AUTOSIZE_MIN_LENGTH = 7;
 
     final Row<HB> row;
@@ -89,9 +89,9 @@ public abstract class ACell<T, HB> {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public T useAutoSizeColumn() {
+    public TC useAutoSizeColumn() {
         enableAutoSize = true;
-        return (T) this;
+        return (TC) this;
     }
 
     void setAutoSizeColumn(final Cell poiCell) {

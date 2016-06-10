@@ -32,8 +32,8 @@ import com.github.svrtm.xlreport.Font.Boldweight;
 /**
  * @author Artem.Smirnov
  */
-public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>, HB extends ACell<HB, ?>> {
-    final HB cell;
+public abstract class ACellStyle<TC extends ACell<?, TC>, TCS extends ACellStyle<? extends ACell<?, TC>, TCS>> {
+    final TC cell;
     final ABuilder<?> builder;
 
     final Workbook wb;
@@ -110,7 +110,7 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
         }
     }
 
-    ACellStyle(final HB cell) {
+    ACellStyle(final TC cell) {
         this.cell = cell;
         this.builder = cell.builder;
         this.wb = cell.builder.sheet.getWorkbook();
@@ -118,7 +118,7 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
         cellStyle_p = new CellStyle_p();
     }
 
-    public abstract HB createStyle();
+    public abstract TC createStyle();
 
     CellStyle getStyle() {
         CellStyle poiStyle = builder.cacheCellStyle.get(cellStyle_p);
@@ -138,13 +138,13 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
     }
 
     @SuppressWarnings("unchecked")
-    public T alignment(final Alignment alignment) {
+    public TCS alignment(final Alignment alignment) {
         if (Alignment.AlignmentType.V == alignment.getAlignmentType())
             cellStyle_p.setVerticalAlignment(alignment.idx);
         else
             cellStyle_p.setAlignment(alignment.idx);
 
-        return (T) this;
+        return (TCS) this;
     }
 
     /**
@@ -153,7 +153,7 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
      * @return
      */
     @SuppressWarnings("unchecked")
-    public T defaultEdging() {
+    public TCS defaultEdging() {
         cellStyle_p.setBorderBottom(BORDER_THIN);
         cellStyle_p.setBottomBorderColor(BLACK.getIndex());
         cellStyle_p.setBorderLeft(BORDER_THIN);
@@ -163,29 +163,29 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
         cellStyle_p.setBorderTop(BORDER_THIN);
         cellStyle_p.setTopBorderColor(BLACK.getIndex());
 
-        return (T) this;
+        return (TCS) this;
     }
 
     @SuppressWarnings("unchecked")
-    public T wrapText() {
+    public TCS wrapText() {
         cellStyle_p.setWrapText(true);
-        return (T) this;
+        return (TCS) this;
     }
 
     @SuppressWarnings("unchecked")
-    public T fillPattern(final FillPattern fp) {
+    public TCS fillPattern(final FillPattern fp) {
         cellStyle_p.setFillPattern(fp.idx);
-        return (T) this;
+        return (TCS) this;
     }
 
     @SuppressWarnings("unchecked")
-    public T fillForegroundColor(final IndexedColors color) {
+    public TCS fillForegroundColor(final IndexedColors color) {
         cellStyle_p.setFillForegroundColor(color.index);
-        return (T) this;
+        return (TCS) this;
     }
 
     @SuppressWarnings("unchecked")
-    public T dataFormat(final String format) {
+    public TCS dataFormat(final String format) {
         Short fmt = builder.cacheDataFormat.get(format);
         if (fmt == null) {
             fmt = wb.createDataFormat().getFormat(format);
@@ -193,12 +193,12 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
         }
         cellStyle_p.setDataFormat(fmt);
 
-        return (T) this;
+        return (TCS) this;
     }
 
     @SuppressWarnings("unchecked")
-    public Font<T> addFont() {
-        return new Font<T>((T) this);
+    public Font<TCS> addFont() {
+        return new Font<TCS>((TCS) this);
     }
 
     /**
@@ -211,7 +211,7 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
      * @return
      */
     @SuppressWarnings("unchecked")
-    public T title() {
+    public TCS title() {
         alignment(CENTER);
         alignment(VERTICAL_CENTER);
         wrapText();
@@ -219,7 +219,7 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
         addFont().heightInPoints((short) 11).boldweight(Boldweight.BOLD)
                 .configureFont();
 
-        return (T) this;
+        return (TCS) this;
     }
 
     /**
@@ -233,7 +233,7 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
      * @return
      */
     @SuppressWarnings("unchecked")
-    public T header() {
+    public TCS header() {
         alignment(CENTER);
         alignment(VERTICAL_CENTER);
         wrapText();
@@ -241,7 +241,7 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
         addFont().heightInPoints((short) 10).color(IndexedColors.BLACK)
                 .boldweight(Boldweight.BOLD).configureFont();
 
-        return (T) this;
+        return (TCS) this;
     }
 
     /**
@@ -255,10 +255,10 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
      * @return this
      */
     @SuppressWarnings("unchecked")
-    public T headerWithForegroundColor(final IndexedColors color) {
+    public TCS headerWithForegroundColor(final IndexedColors color) {
         header();
         fillForegroundColor(color).fillPattern(FillPattern.SOLID_FOREGROUND);
-        return (T) this;
+        return (TCS) this;
     }
 
     /**
@@ -271,13 +271,13 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
      * @return
      */
     @SuppressWarnings("unchecked")
-    public T total() {
+    public TCS total() {
         alignment(CENTER);
         defaultEdging();
         addFont().heightInPoints((short) 10).color(IndexedColors.BLACK).italic()
                 .boldweight(Boldweight.BOLD).configureFont();
 
-        return (T) this;
+        return (TCS) this;
     }
 
     /**
@@ -290,10 +290,10 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>
      * @return this
      */
     @SuppressWarnings("unchecked")
-    public T totalWithForegroundColor(final IndexedColors fg) {
+    public TCS totalWithForegroundColor(final IndexedColors fg) {
         total();
         fillForegroundColor(fg).fillPattern(FillPattern.SOLID_FOREGROUND);
-        return (T) this;
+        return (TCS) this;
     }
 
 }

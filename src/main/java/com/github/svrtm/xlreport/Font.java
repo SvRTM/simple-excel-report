@@ -22,8 +22,8 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 /**
  * @author Artem.Smirnov
  */
-final public class Font<T extends ACellStyle<?, ?>> {
-    final private T cellStyle;
+final public class Font<TCS extends ACellStyle<?, ?>> {
+    final private TCS cellStyle;
     final private ABuilder<?> builder;
 
     final private Font_p font_p;
@@ -41,35 +41,35 @@ final public class Font<T extends ACellStyle<?, ?>> {
         }
     }
 
-    Font(final T cellStyle) {
+    Font(final TCS cellStyle) {
         this.cellStyle = cellStyle;
         this.builder = cellStyle.builder;
         font_p = new Font_p();
     }
 
-    public T configureFont() {
+    public TCS configureFont() {
         getFont();
         cellStyle.cellStyle_p.font_p = font_p;
 
         return cellStyle;
     }
 
-    public Font<T> heightInPoints(final short height) {
+    public Font<TCS> heightInPoints(final short height) {
         font_p.setFontHeightInPoints(height);
         return this;
     }
 
-    public Font<T> color(final IndexedColors color) {
+    public Font<TCS> color(final IndexedColors color) {
         font_p.setColor(color.index);
         return this;
     }
 
-    public Font<T> italic() {
+    public Font<TCS> italic() {
         font_p.setItalic(true);
         return this;
     }
 
-    public Font<T> boldweight(final Boldweight boldweight) {
+    public Font<TCS> boldweight(final Boldweight boldweight) {
         font_p.setBoldweight(boldweight.idx);
         return this;
     }

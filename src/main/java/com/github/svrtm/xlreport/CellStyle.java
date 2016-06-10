@@ -20,7 +20,7 @@ package com.github.svrtm.xlreport;
 /**
  * @author Artem.Smirnov
  */
-final public class CellStyle<HB> extends ACellStyle<CellStyle<HB>, Cell<HB>> {
+final public class CellStyle<HB> extends ACellStyle<Cell<HB>, CellStyle<HB>> {
 
     CellStyle(final Cell<HB> cell) {
         super(cell);

@@ -34,7 +34,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 /**
  * @author Artem.Smirnov
  */
-final public class Cell<HB> extends ACell<Cell<HB>, HB> {
+final public class Cell<HB> extends ACell<HB, Cell<HB>> {
     private boolean decimalFormat;
     private BigDecimal bigDecimalValue;
     private final CreationHelper creationHelper;

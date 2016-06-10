@@ -21,7 +21,7 @@ package com.github.svrtm.xlreport;
  * @author Artem.Smirnov
  */
 final public class CellsStyle<HB>
-        extends ACellStyle<CellsStyle<HB>, Cells<HB>> {
+        extends ACellStyle<Cells<HB>, CellsStyle<HB>> {
 
     CellsStyle(final Cells<HB> cells) {
         super(cells);
