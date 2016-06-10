@@ -1,6 +1,6 @@
 /**
  * <pre>
- * Copyright © 2012 Artem Smirnov
+ * Copyright © 2012,2016 Artem Smirnov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ final public class Row<HB> {
     ABuilder<HB> builder;
     org.apache.poi.ss.usermodel.Row poiRow;
 
-    protected Map<Integer, Cell<HB>> cells = new HashMap<Integer, Cell<HB>>();
+    Map<Integer, Cell<HB>> cells = new HashMap<Integer, Cell<HB>>();
 
     enum RowOperation {
         CREATE, GET, GET_CREATE
@@ -73,11 +73,10 @@ final public class Row<HB> {
             poiRow = aBuilder.sheet.createRow(i);
         else if (GET_CREATE == rowOperation)
             poiRow = aBuilder.sheet.createRow(i);
-        else
-                                             // GET
-                                             throw new ReportBuilderException(
-                                                     format("A row of number %d can't be found. Please, create a number before using it",
-                                                             i));
+        else // GET
+            throw new ReportBuilderException(
+                    format("A row of number %d can't be found. Please, create a number before using it",
+                            i));
     }
 
     @SuppressWarnings("unchecked")

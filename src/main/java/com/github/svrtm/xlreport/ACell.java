@@ -1,6 +1,6 @@
 /**
  * <pre>
- * Copyright © 2012 Artem Smirnov
+ * Copyright © 2012,2016 Artem Smirnov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,6 @@
  */
 package com.github.svrtm.xlreport;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.trimToNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +27,10 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * @author Artem.Smirnov
  */
 public abstract class ACell<T, HB> {
-    final protected Row<HB> row;
-    final protected ABuilder<?> builder;
+    private static int AUTOSIZE_MIN_LENGTH = 7;
+
+    final Row<HB> row;
+    final ABuilder<HB> builder;
 
     /**
      * This problem is caused by the fact that sometimes javac's implementation
@@ -45,16 +44,16 @@ public abstract class ACell<T, HB> {
      */
     // protected ACellStyle<? extends ACell<?, HB>> cellStyle;
     @SuppressWarnings("rawtypes")
-    protected ACellStyle cellStyle;
+    ACellStyle cellStyle;
 
-    protected boolean enableAutoSize;
+    boolean enableAutoSize;
 
     ACell(final Row<HB> row) {
         this.row = row;
         this.builder = row.builder;
     }
 
-    protected List<Cell> findMergedCells(final Cell poiCell) {
+    List<Cell> findMergedCells(final Cell poiCell) {
         if (builder.regionsList == null)
             return null;
 
@@ -68,7 +67,7 @@ public abstract class ACell<T, HB> {
                 final int lastRow = region.getLastRow();
                 mergedCells = new ArrayList<Cell>(region.getNumberOfCells());
                 for (rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
-                    final Row<?> row = builder.rowOrCreateIfAbsent(rowIndex);
+                    final Row<HB> row = builder.rowOrCreateIfAbsent(rowIndex);
                     for (int colIndex =
                                       firstCol; colIndex <= lastCol; colIndex++) {
                         final Cell mergedCell = row
@@ -102,10 +101,16 @@ public abstract class ACell<T, HB> {
         switch (cellType) {
             case Cell.CELL_TYPE_STRING: {
                 final String value = poiCell.getStringCellValue();
-                if (value != null && value.length() > 6)
-                    enableAutoSize = isNotBlank(trimToNull(value));
-            }
+                if (value != null && value.length() >= AUTOSIZE_MIN_LENGTH) {
+                    final String tr = value.trim();
+                    for (int i = 0; i < tr.length(); i++)
+                        if (Character.isWhitespace(tr.charAt(i)) == false) {
+                            enableAutoSize = true;
+                            break;
+                        }
+                }
                 break;
+            }
 
             case Cell.CELL_TYPE_BLANK:
                 break;

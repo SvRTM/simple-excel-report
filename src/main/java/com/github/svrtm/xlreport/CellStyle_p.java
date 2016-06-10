@@ -1,6 +1,6 @@
 /**
  * <pre>
- * Copyright © 2012 Artem Smirnov
+ * Copyright © 2012,2016 Artem Smirnov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
  * </pre>
  */
 package com.github.svrtm.xlreport;
+
+import org.apache.poi.ss.usermodel.CellStyle;
 
 /**
  * @author Artem.Smirnov
@@ -44,25 +46,11 @@ final class CellStyle_p {
     Font_p font_p;
 
     /**
-     * @return the verticalAlignment
-     */
-    public short getVerticalAlignment() {
-        return verticalAlignment;
-    }
-
-    /**
      * @param verticalAlignment
      *            the verticalAlignment to set
      */
     public void setVerticalAlignment(final short verticalAlignment) {
         this.verticalAlignment = verticalAlignment;
-    }
-
-    /**
-     * @return the alignment
-     */
-    public short getAlignment() {
-        return alignment;
     }
 
     /**
@@ -74,25 +62,11 @@ final class CellStyle_p {
     }
 
     /**
-     * @return the borderBottom
-     */
-    public short getBorderBottom() {
-        return borderBottom;
-    }
-
-    /**
      * @param borderBottom
      *            the borderBottom to set
      */
     public void setBorderBottom(final short borderBottom) {
         this.borderBottom = borderBottom;
-    }
-
-    /**
-     * @return the bottomBorderColor
-     */
-    public short getBottomBorderColor() {
-        return bottomBorderColor;
     }
 
     /**
@@ -104,25 +78,11 @@ final class CellStyle_p {
     }
 
     /**
-     * @return the borderLeft
-     */
-    public short getBorderLeft() {
-        return borderLeft;
-    }
-
-    /**
      * @param borderLeft
      *            the borderLeft to set
      */
     public void setBorderLeft(final short borderLeft) {
         this.borderLeft = borderLeft;
-    }
-
-    /**
-     * @return the leftBorderColor
-     */
-    public short getLeftBorderColor() {
-        return leftBorderColor;
     }
 
     /**
@@ -134,25 +94,11 @@ final class CellStyle_p {
     }
 
     /**
-     * @return the borderRight
-     */
-    public short getBorderRight() {
-        return borderRight;
-    }
-
-    /**
      * @param borderRight
      *            the borderRight to set
      */
     public void setBorderRight(final short borderRight) {
         this.borderRight = borderRight;
-    }
-
-    /**
-     * @return the rightBorderColor
-     */
-    public short getRightBorderColor() {
-        return rightBorderColor;
     }
 
     /**
@@ -164,25 +110,11 @@ final class CellStyle_p {
     }
 
     /**
-     * @return the borderTop
-     */
-    public short getBorderTop() {
-        return borderTop;
-    }
-
-    /**
      * @param borderTop
      *            the borderTop to set
      */
     public void setBorderTop(final short borderTop) {
         this.borderTop = borderTop;
-    }
-
-    /**
-     * @return the topBorderColor
-     */
-    public short getTopBorderColor() {
-        return topBorderColor;
     }
 
     /**
@@ -194,13 +126,6 @@ final class CellStyle_p {
     }
 
     /**
-     * @return the wrapText
-     */
-    public boolean isWrapText() {
-        return wrapText;
-    }
-
-    /**
      * @param wrapText
      *            the wrapText to set
      */
@@ -209,25 +134,11 @@ final class CellStyle_p {
     }
 
     /**
-     * @return the fillPattern
-     */
-    public short getFillPattern() {
-        return fillPattern;
-    }
-
-    /**
      * @param fillPattern
      *            the fillPattern to set
      */
     public void setFillPattern(final short fillPattern) {
         this.fillPattern = fillPattern;
-    }
-
-    /**
-     * @return the fillForegroundColor
-     */
-    public short getFillForegroundColor() {
-        return fillForegroundColor;
     }
 
     /**
@@ -330,5 +241,26 @@ final class CellStyle_p {
         if (wrapText != other.wrapText)
             return false;
         return true;
+    }
+
+    public void copyTo(final CellStyle poiStyle) {
+        poiStyle.setVerticalAlignment(verticalAlignment);
+        poiStyle.setAlignment(alignment);
+
+        poiStyle.setBorderBottom(borderBottom);
+        poiStyle.setBottomBorderColor(bottomBorderColor);
+        poiStyle.setBorderLeft(borderLeft);
+        poiStyle.setLeftBorderColor(leftBorderColor);
+        poiStyle.setBorderRight(borderRight);
+        poiStyle.setRightBorderColor(rightBorderColor);
+        poiStyle.setBorderTop(borderTop);
+        poiStyle.setTopBorderColor(topBorderColor);
+
+        poiStyle.setWrapText(wrapText);
+
+        poiStyle.setFillPattern(fillPattern);
+        poiStyle.setFillForegroundColor(fillForegroundColor);
+
+        poiStyle.setDataFormat(fmt);
     }
 }

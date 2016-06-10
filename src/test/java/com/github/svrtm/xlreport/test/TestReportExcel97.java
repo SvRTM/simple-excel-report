@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import com.github.svrtm.xlreport.ACellStyle.Alignment;
 import com.github.svrtm.xlreport.Report;
+import com.github.svrtm.xlreport.Report.AHeader;
 import com.github.svrtm.xlreport.Report.Body;
 import com.github.svrtm.xlreport.Report.Final;
 import com.github.svrtm.xlreport.Report.Header;
@@ -34,8 +35,8 @@ public class TestReportExcel97 {
                 .buildRow();
                 int nLastRow = getIndexOfLastRow();
 
-                addRow(2, new ICallback() {
-                    public void step(Row<?> row) {
+                addRow(2, new ICallback<AHeader>() {
+                    public void step(Row<AHeader> row) {
                         for (int i = 0; i < nCell; i++) {
                             row.addCell(i).buildCell();
                         }

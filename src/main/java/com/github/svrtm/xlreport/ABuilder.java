@@ -1,6 +1,6 @@
 /**
  * <pre>
- * Copyright © 2012 Artem Smirnov
+ * Copyright © 2012,2016 Artem Smirnov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,9 +43,6 @@ import com.github.svrtm.xlreport.Report.AHeader;
 public abstract class ABuilder<HB> {
     AHeader header;
 
-    Class<? extends Font> fontClass;
-    Class<? extends CellStyle> cellStyleClass;
-
     Workbook wb;
     Sheet sheet;
     int maxrow = -1;
@@ -59,13 +56,10 @@ public abstract class ABuilder<HB> {
 
     //
     //
-    protected void init(final Workbook wb, final int maxrow) {
+    void init(final Workbook wb, final int maxrow) {
         this.maxrow = maxrow;
         this.wb = wb;
         this.sheet = wb.createSheet();
-
-        this.fontClass = wb.getFontAt((short) 0).getClass();
-        this.cellStyleClass = wb.getCellStyleAt((short) 0).getClass();
 
         this.cacheFont = new HashMap<Font_p, Font>(2);
         this.cacheCellStyle = new HashMap<CellStyle_p, CellStyle>();
@@ -77,12 +71,12 @@ public abstract class ABuilder<HB> {
      *
      * @author Artem.Smirnov
      */
-    public interface ICallback {
+    public interface ICallback<HB> {
         /**
          * @param row
          *            - new row
          */
-        void step(final Row<?> row);
+        void step(final Row<HB> row);
     }
 
     /**
@@ -116,7 +110,7 @@ public abstract class ABuilder<HB> {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public HB addRow(final int nRow, final ICallback callback) {
+    public HB addRow(final int nRow, final ICallback<HB> callback) {
         for (int i = 0; i < nRow; i++)
             callback.step(addRow());
         return (HB) this;
@@ -217,7 +211,7 @@ public abstract class ABuilder<HB> {
                            final byte blue) {
         if (!(wb instanceof HSSFWorkbook))
             throw new ReportBuilderException(
-                    format("This operation is not supported for workbook %1",
+                    format("This operation is not supported for workbook %s",
                             wb.getClass().getSimpleName()));
 
         final HSSFWorkbook hssfwb = (HSSFWorkbook) wb;

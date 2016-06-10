@@ -1,6 +1,6 @@
 /**
  * <pre>
- * Copyright © 2012 Artem Smirnov
+ * Copyright © 2012,2016 Artem Smirnov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,25 +28,11 @@ final class Font_p {
     private short boldweight;
 
     /**
-     * @return the fontHeightInPoints
-     */
-    public short getFontHeightInPoints() {
-        return fontHeightInPoints;
-    }
-
-    /**
      * @param fontHeightInPoints
      *            the fontHeightInPoints to set
      */
     public void setFontHeightInPoints(final short fontHeightInPoints) {
         this.fontHeightInPoints = fontHeightInPoints;
-    }
-
-    /**
-     * @return the color
-     */
-    public short getColor() {
-        return color;
     }
 
     /**
@@ -58,25 +44,11 @@ final class Font_p {
     }
 
     /**
-     * @return the italic
-     */
-    public boolean isItalic() {
-        return italic;
-    }
-
-    /**
      * @param italic
      *            the italic to set
      */
     public void setItalic(final boolean italic) {
         this.italic = italic;
-    }
-
-    /**
-     * @return the boldweight
-     */
-    public short getBoldweight() {
-        return boldweight;
     }
 
     /**
@@ -124,5 +96,12 @@ final class Font_p {
         if (italic != other.italic)
             return false;
         return true;
+    }
+
+    public void copyTo(final org.apache.poi.ss.usermodel.Font poiFont) {
+        poiFont.setFontHeightInPoints(fontHeightInPoints);
+        poiFont.setColor(color);
+        poiFont.setItalic(italic);
+        poiFont.setBoldweight(boldweight);
     }
 }

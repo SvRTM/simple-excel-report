@@ -1,6 +1,6 @@
 /**
  * <pre>
- * Copyright © 2012 Artem Smirnov
+ * Copyright © 2012,2016 Artem Smirnov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,17 +32,15 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import net.sf.cglib.beans.BeanCopier;
-
 /**
  * @author Artem.Smirnov
  */
-public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<?, ?>>, HB extends ACell<HB, ?>> {
-    final protected HB cell;
-    final protected ABuilder<?> builder;
+public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<HB, ?>>, HB extends ACell<HB, ?>> {
+    final HB cell;
+    final ABuilder<?> builder;
 
-    final protected Workbook wb;
-    final protected Row poiRow;
+    final Workbook wb;
+    final Row poiRow;
 
     final CellStyle_p cellStyle_p;
 
@@ -100,9 +98,7 @@ public abstract class ACellStyle<T extends ACellStyle<T, ? extends ACell<?, ?>>,
         CellStyle poiStyle = builder.cacheCellStyle.get(cellStyle_p);
         if (poiStyle == null) {
             poiStyle = wb.createCellStyle();
-            final BeanCopier beanCopier = BeanCopier.create(CellStyle_p.class,
-                    builder.cellStyleClass, false);
-            beanCopier.copy(cellStyle_p, poiStyle, null);
+            cellStyle_p.copyTo(poiStyle);
             final Font_p fontWrapper = cellStyle_p.font_p;
             if (fontWrapper != null) {
                 final org.apache.poi.ss.usermodel.Font font = builder.cacheFont

@@ -1,6 +1,6 @@
 /**
  * <pre>
- * Copyright © 2012 Artem Smirnov
+ * Copyright © 2012,2016 Artem Smirnov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ public enum Report {
         private final Workbook wb;
         private final int maxrow;
 
-        Header(final Workbook wb, final int maxrow) {
+        private Header(final Workbook wb, final int maxrow) {
             this.wb = wb;
             this.maxrow = maxrow;
         }
@@ -139,9 +139,6 @@ public enum Report {
 
             wb = header.wb;
             sheet = wb.getSheetAt(wb.getActiveSheetIndex());
-
-            fontClass = wb.getFontAt((short) 0).getClass();
-            cellStyleClass = wb.getCellStyleAt((short) 0).getClass();
 
             cacheFont = header.cacheFont;
             cacheCellStyle = header.cacheCellStyle;

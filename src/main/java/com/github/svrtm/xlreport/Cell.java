@@ -1,6 +1,6 @@
 /**
  * <pre>
- * Copyright © 2012 Artem Smirnov
+ * Copyright © 2012,2016 Artem Smirnov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ final public class Cell<HB> extends ACell<Cell<HB>, HB> {
     private boolean decimalFormat;
     private BigDecimal bigDecimalValue;
     private final CreationHelper creationHelper;
-    org.apache.poi.ss.usermodel.Cell poiCell;
+    final org.apache.poi.ss.usermodel.Cell poiCell;
 
     enum CellOperation {
         CREATE, GET, GET_CREATE
@@ -47,13 +47,13 @@ final public class Cell<HB> extends ACell<Cell<HB>, HB> {
         super(row);
         creationHelper = builder.sheet.getWorkbook().getCreationHelper();
 
+        final org.apache.poi.ss.usermodel.Row poiRow = row.poiRow;
         if (CREATE == cellOperation)
-            poiCell = row.poiRow.createCell(i);
-        else {
-            poiCell = row.poiRow.getCell(i);
-            if (GET_CREATE == cellOperation && poiCell == null)
-                poiCell = row.poiRow.createCell(i);
-        }
+            poiCell = poiRow.createCell(i);
+        else
+            poiCell = GET_CREATE == cellOperation
+                      && poiRow.getCell(i) == null ? poiRow.createCell(i)
+                                                   : poiRow.getCell(i);
     }
 
     public Row<HB> buildCell() {

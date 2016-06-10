@@ -1,6 +1,6 @@
 /**
  * <pre>
- * Copyright © 2012 Artem Smirnov
+ * Copyright © 2012,2016 Artem Smirnov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
  * </pre>
  */
 package com.github.svrtm.xlreport;
-
-import net.sf.cglib.beans.BeanCopier;
 
 /**
  * @author Artem.Smirnov
@@ -46,9 +44,7 @@ final public class Font<T extends ACellStyle<?, ?>> {
                                                  builder.cacheFont.get(font_p);
         if (poiFont == null) {
             poiFont = cellStyle.wb.createFont();
-            final BeanCopier beanCopier = BeanCopier.create(Font_p.class,
-                    builder.fontClass, false);
-            beanCopier.copy(font_p, poiFont, null);
+            font_p.copyTo(poiFont);
             builder.cacheFont.put(font_p, poiFont);
         }
 
