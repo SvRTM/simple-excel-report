@@ -20,8 +20,6 @@ package com.github.svrtm.xlreport;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * @author Artem.Smirnov
@@ -32,7 +30,7 @@ public enum Report {
         @Override
         final public Body instanceBody(final Header header) {
             header.init(new HSSFWorkbook(),
-                    SpreadsheetVersion.EXCEL97.getLastRowIndex());
+                    SpreadsheetVersion.EXCEL97.getLastRowIndex(), Row97.class);
             header.prepareHeader();
             return new Body(header);
         }
@@ -44,45 +42,45 @@ public enum Report {
         }
     },
 
-    EXCEL2007 {
-        /**
-         * Specifies how many rows can be accessed at most via getRow().
-         * When a new node is created via createRow() and the total number
-         * of unflushed records would exceed the specified value, then the
-         * row with the lowest index value is flushed and cannot be accessed
-         * via getRow() anymore.
-         */
-        private static final int ROW_ACCESS_WINDOW_SIZE = 10000;
-
-        @Override
-        final public Body instanceBody(final Header header) {
-            header.init(new SXSSFWorkbook(ROW_ACCESS_WINDOW_SIZE),
-                    SpreadsheetVersion.EXCEL2007.getLastRowIndex());
-            header.prepareHeader();
-            return new Body(header);
-        }
-
-        @Override
-        final public Body instanceBody() {
-            return new Body(new SXSSFWorkbook(ROW_ACCESS_WINDOW_SIZE),
-                    SpreadsheetVersion.EXCEL2007.getLastRowIndex());
-        }
-    },
-
-    EXCEL2007_NEW {
-        @Override
-        final public Body instanceBody(final Header header) {
-            header.init(new XSSFWorkbook(), -1);
-            header.prepareHeader();
-            return new Body(header);
-        }
-
-        @Override
-        final public Body instanceBody() {
-            return new Body(new XSSFWorkbook(), -1);
-        }
-    };
-
+    // EXCEL2007 {
+    // /**
+    // * Specifies how many rows can be accessed at most via getRow().
+    // * When a new node is created via createRow() and the total number
+    // * of unflushed records would exceed the specified value, then the
+    // * row with the lowest index value is flushed and cannot be accessed
+    // * via getRow() anymore.
+    // */
+    // private static final int ROW_ACCESS_WINDOW_SIZE = 10000;
+    //
+    // @Override
+    // final public Body instanceBody(final Header header) {
+    // header.init(new SXSSFWorkbook(ROW_ACCESS_WINDOW_SIZE),
+    // SpreadsheetVersion.EXCEL2007.getLastRowIndex());
+    // header.prepareHeader();
+    // return new Body(header);
+    // }
+    //
+    // @Override
+    // final public Body instanceBody() {
+    // return new Body(new SXSSFWorkbook(ROW_ACCESS_WINDOW_SIZE),
+    // SpreadsheetVersion.EXCEL2007.getLastRowIndex());
+    // }
+    // },
+    //
+    // EXCEL2007_NEW {
+    // @Override
+    // final public Body instanceBody(final Header header) {
+    // header.init(new XSSFWorkbook(), -1);
+    // header.prepareHeader();
+    // return new Body(header);
+    // }
+    //
+    // @Override
+    // final public Body instanceBody() {
+    // return new Body(new XSSFWorkbook(), -1);
+    // }
+    // };
+    ;
     public abstract Body instanceBody(final Header header);
 
     public abstract Body instanceBody();
@@ -107,15 +105,15 @@ public enum Report {
         void prepareHeader();
     }
 
-    public static abstract class Header extends ABuilder<Header>
+    public static abstract class Header extends ABuilder<Header, Row97<Header>>
             implements IHeader {}
 
     //
     //
-    final public class Body extends ABuilder<Body> {
+    final public class Body extends ABuilder<Body, Row97<Body>> {
 
         private Body(final Workbook wb, final int maxrow) {
-            init(wb, maxrow);
+            init(wb, maxrow, Row97.class);
         }
 
         private Body(final Header header) {
@@ -132,6 +130,8 @@ public enum Report {
             cacheFont = header.cacheFont;
             cacheCellStyle = header.cacheCellStyle;
             cacheDataFormat = header.cacheDataFormat;
+
+            rowClass = header.rowClass;
         }
 
         public Final instanceFinal() {

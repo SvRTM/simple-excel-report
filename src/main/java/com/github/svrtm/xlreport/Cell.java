@@ -34,7 +34,8 @@ import org.apache.poi.ss.usermodel.RichTextString;
 /**
  * @author Artem.Smirnov
  */
-final public class Cell<HB> extends ACell<HB, Cell<HB>> {
+final public class Cell<HB, TR extends Row<HB, TR>>
+        extends ACell<HB, Cell<HB, TR>> {
     private boolean decimalFormat;
     private BigDecimal bigDecimalValue;
     private final CreationHelper creationHelper;
@@ -44,7 +45,7 @@ final public class Cell<HB> extends ACell<HB, Cell<HB>> {
         CREATE, GET, CREATE_and_GET
     }
 
-    Cell(final Row<HB> row, final int i, final CellOperation cellOperation) {
+    Cell(final TR row, final int i, final CellOperation cellOperation) {
         super(row);
         creationHelper = builder.sheet.getWorkbook().getCreationHelper();
 
@@ -57,7 +58,8 @@ final public class Cell<HB> extends ACell<HB, Cell<HB>> {
                                                    : poiRow.getCell(i);
     }
 
-    public Row<HB> createCell() {
+    @SuppressWarnings("unchecked")
+    public TR createCell() {
         if (decimalFormat)
             valueWithDecimalFormat();
         else if (bigDecimalValue != null)
@@ -65,47 +67,47 @@ final public class Cell<HB> extends ACell<HB, Cell<HB>> {
         if (enableAutoSize)
             setAutoSizeColumn(poiCell);
 
-        return row;
+        return (TR) row;
     }
 
     @SuppressWarnings("unchecked")
-    public CellStyle<HB> prepareStyle() {
+    public CellStyle<HB, TR> prepareStyle() {
         if (cellStyle == null)
-            cellStyle = new CellStyle<HB>(this);
-        return (CellStyle<HB>) cellStyle;
+            cellStyle = new CellStyle<HB, TR>(this);
+        return (CellStyle<HB, TR>) cellStyle;
     }
 
-    public Cell<HB> withValue(final String value) {
+    public Cell<HB, TR> withValue(final String value) {
         poiCell.setCellValue(value);
         return this;
     }
 
-    public Cell<HB> withRichText(final String value) {
+    public Cell<HB, TR> withRichText(final String value) {
         poiCell.setCellValue(creationHelper.createRichTextString(value));
         return this;
     }
 
-    public Cell<HB> withRichText(final RichTextString value) {
+    public Cell<HB, TR> withRichText(final RichTextString value) {
         poiCell.setCellValue(value);
         return this;
     }
 
-    public Cell<HB> withValue(final int value) {
+    public Cell<HB, TR> withValue(final int value) {
         poiCell.setCellValue(value);
         return this;
     }
 
-    public Cell<HB> withValue(final double value) {
+    public Cell<HB, TR> withValue(final double value) {
         poiCell.setCellValue(value);
         return this;
     }
 
-    public Cell<HB> withValue(final BigDecimal value) {
+    public Cell<HB, TR> withValue(final BigDecimal value) {
         bigDecimalValue = value;
         return this;
     }
 
-    public Cell<HB> withValue(final BigInteger value) {
+    public Cell<HB, TR> withValue(final BigInteger value) {
         withValue(value.toString());
         return this;
     }
@@ -116,7 +118,7 @@ final public class Cell<HB> extends ACell<HB, Cell<HB>> {
      * @param value
      * @return
      */
-    public Cell<HB> withValue(final Object value) {
+    public Cell<HB, TR> withValue(final Object value) {
         if (value == null)
             throw new ReportBuilderException("Value cannot be null");
 
@@ -144,7 +146,7 @@ final public class Cell<HB> extends ACell<HB, Cell<HB>> {
      * @return this
      * @see ACellStyle#dataFormat(String)
      */
-    public Cell<HB> useDecimalFormat() {
+    public Cell<HB, TR> useDecimalFormat() {
         decimalFormat = true;
         return this;
     }

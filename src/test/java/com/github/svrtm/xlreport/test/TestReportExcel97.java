@@ -13,6 +13,7 @@ import com.github.svrtm.xlreport.Report.Body;
 import com.github.svrtm.xlreport.Report.Final;
 import com.github.svrtm.xlreport.Report.Header;
 import com.github.svrtm.xlreport.Row.INewCell;
+import com.github.svrtm.xlreport.Row97;
 
 
 public class TestReportExcel97 {
@@ -239,10 +240,10 @@ public class TestReportExcel97 {
                 .iColumnWidthIs(7, 25)
                 //
                 .addNewRow()
-                    .addAndConfigureCells(new INewCell<Header>() {
+                    .addAndConfigureCells(new INewCell<Header, Row97<Header>>() {
                         private int i = 0;
 
-                        public void iCell(final Cell<Header> newCell) {
+                        public void iCell(final Cell<Header, Row97<Header>> newCell) {
                             newCell.withValue(headerValueCells[i++]);
                         }
                     }, iColumns)

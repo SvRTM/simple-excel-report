@@ -20,15 +20,15 @@ package com.github.svrtm.xlreport;
 /**
  * @author Artem.Smirnov
  */
-final public class CellsStyle<HB>
-        extends ACellStyle<Cells<HB>, CellsStyle<HB>> {
+final public class CellsStyle<HB, TR extends Row<HB, TR>>
+        extends ACellStyle<Cells<HB, TR>, CellsStyle<HB, TR>> {
 
-    CellsStyle(final Cells<HB> cells) {
+    CellsStyle(final Cells<HB, TR> cells) {
         super(cells);
     }
 
     @Override
-    public Cells<HB> createStyle() {
+    public Cells<HB, TR> createStyle() {
         return cell;
     }
 }

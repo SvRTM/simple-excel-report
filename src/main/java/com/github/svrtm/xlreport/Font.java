@@ -24,7 +24,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
  */
 final public class Font<TCS extends ACellStyle<?, ?>> {
     final private TCS cellStyle;
-    final private ABuilder<?> builder;
+    final private ABuilder<?, ?> builder;
 
     final private Font_p font_p;
 

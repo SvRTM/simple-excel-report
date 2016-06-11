@@ -27,19 +27,21 @@ import org.apache.poi.ss.usermodel.CellStyle;
 /**
  * @author Artem.Smirnov
  */
-final public class Cells<HB> extends ACell<HB, Cells<HB>> {
+final public class Cells<HB, TR extends Row<HB, TR>>
+        extends ACell<HB, Cells<HB, TR>> {
     private int columnWidth = -1;
     private int incrementValue = -1;
     private final int[] indexesCells;
 
-    Cells(final Row<HB> row, final int[] indexesCells) {
+    Cells(final TR row, final int[] indexesCells) {
         super(row);
         this.indexesCells = indexesCells;
     }
 
-    public Row<HB> configureCells() {
+    @SuppressWarnings("unchecked")
+    public TR configureCells() {
         if (columnWidth == -1 && incrementValue == -1 && cellStyle == null)
-            return row;
+            return (TR) row;
 
         int increment = incrementValue;
         for (final int i : indexesCells) {
@@ -73,7 +75,7 @@ final public class Cells<HB> extends ACell<HB, Cells<HB>> {
                 }
         }
 
-        return row;
+        return (TR) row;
     }
 
     /**
@@ -83,18 +85,18 @@ final public class Cells<HB> extends ACell<HB, Cells<HB>> {
      * @return The object {@link CellsStyle}
      */
     @SuppressWarnings("unchecked")
-    public CellsStyle<HB> prepareStyle() {
+    public CellsStyle<HB, TR> prepareStyle() {
         if (cellStyle == null)
-            cellStyle = new CellsStyle<HB>(this);
-        return (CellsStyle<HB>) cellStyle;
+            cellStyle = new CellsStyle<HB, TR>(this);
+        return (CellsStyle<HB, TR>) cellStyle;
     }
 
-    public Cells<HB> whereColumnWidthIs(final int columnWidth) {
+    public Cells<HB, TR> whereColumnWidthIs(final int columnWidth) {
         this.columnWidth = columnWidth * 256;
         return this;
     }
 
-    public Cells<HB> withInitialValueOfIncrement(final int start) {
+    public Cells<HB, TR> withInitialValueOfIncrement(final int start) {
         incrementValue = start;
         return this;
     }

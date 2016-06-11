@@ -22,6 +22,7 @@ import static com.github.svrtm.xlreport.Row.RowOperation.CREATE_and_GET;
 import static com.github.svrtm.xlreport.Row.RowOperation.GET;
 import static java.lang.String.format;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,12 +38,14 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.github.svrtm.xlreport.Report.Header;
+import com.github.svrtm.xlreport.Row.RowOperation;
 
 /**
  * @author Artem.Smirnov
  */
-public abstract class ABuilder<HB> {
+public abstract class ABuilder<HB, TR extends Row<HB, TR>> {
     Header header;
+    Class<?> rowClass;
 
     Workbook wb;
     Sheet sheet;
@@ -57,7 +60,7 @@ public abstract class ABuilder<HB> {
 
     //
     //
-    void init(final Workbook wb, final int maxrow) {
+    void init(final Workbook wb, final int maxrow, final Class<?> rowClass) {
         this.maxrow = maxrow;
         this.wb = wb;
         this.sheet = wb.createSheet();
@@ -65,6 +68,8 @@ public abstract class ABuilder<HB> {
         this.cacheFont = new HashMap<Font_p, Font>(2);
         this.cacheCellStyle = new HashMap<CellStyle_p, CellStyle>();
         this.cacheDataFormat = new HashMap<String, Short>(2);
+
+        this.rowClass = rowClass;
     }
 
     /**
@@ -72,12 +77,12 @@ public abstract class ABuilder<HB> {
      *
      * @author Artem.Smirnov
      */
-    public interface INewRow<HB> {
+    public interface INewRow<HB, TR extends Row<HB, TR>> {
         /**
          * @param row
          *            - new row
          */
-        void iRow(final Row<HB> row);
+        void iRow(final TR row);
     }
 
     /**
@@ -86,8 +91,9 @@ public abstract class ABuilder<HB> {
      *
      * @return
      */
-    public Row<HB> addNewRow() {
-        return new Row<HB>(this);
+    public TR addNewRow() {
+        // return new Row<HB>(this);
+        return newRowInstance();
     }
 
     /**
@@ -102,7 +108,8 @@ public abstract class ABuilder<HB> {
     @SuppressWarnings("unchecked")
     public HB addNewRowsWithEmptyCells(final int nRows, final int nCells) {
         for (int iRow = 0; iRow < nRows; iRow++) {
-            final Row<HB> r = addNewRow();
+            // final Row<HB> r = addNewRow();
+            final TR r = addNewRow();
             for (int iCell = 0; iCell < nCells; iCell++)
                 r.prepareNewCell(iCell).createCell();
             r.configureRow();
@@ -118,8 +125,9 @@ public abstract class ABuilder<HB> {
      *            - logical row
      * @return
      */
-    public Row<HB> addRow(final int rowIndex) {
-        return new Row<HB>(this, rowIndex, CREATE);
+    public TR addRow(final int rowIndex) {
+        // return new Row<HB>(this, rowIndex, CREATE);
+        return newRowInstance(rowIndex, CREATE);
     }
 
     /**
@@ -131,7 +139,7 @@ public abstract class ABuilder<HB> {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public HB addNewnRows(final int nRow, final INewRow<HB> callback) {
+    public HB addNewnRows(final int nRow, final INewRow<HB, TR> callback) {
         for (int i = 0; i < nRow; i++)
             callback.iRow(addNewRow());
         return (HB) this;
@@ -144,12 +152,14 @@ public abstract class ABuilder<HB> {
      *            - row to get
      * @return
      */
-    public Row<HB> row(final int i) {
-        return new Row<HB>(this, i, GET);
+    public TR row(final int i) {
+        // return new Row<HB>(this, i, GET);
+        return newRowInstance(i, GET);
     }
 
-    Row<HB> rowOrCreateIfAbsent(final int i) {
-        return new Row<HB>(this, i, CREATE_and_GET);
+    TR rowOrCreateIfAbsent(final int i) {
+        // return new Row<HB>(this, i, CREATE_and_GET);
+        return newRowInstance(i, CREATE_and_GET);
     }
 
     /**
@@ -246,5 +256,37 @@ public abstract class ABuilder<HB> {
     public HB withAutoSizeColumn(final int column) {
         sheet.autoSizeColumn(column);
         return (HB) this;
+    }
+
+    // ********************************************************************** //
+    // ********************************************************************** //
+
+    private TR newRowInstance(final int i, final RowOperation oper) {
+        try {
+            @SuppressWarnings("unchecked")
+            final Constructor<TR> c = (Constructor<TR>) rowClass
+                    .getDeclaredConstructor(ABuilder.class, int.class,
+                            RowOperation.class);
+            return c.newInstance(this, i, oper);
+        }
+        catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private TR newRowInstance() {
+        try {
+            @SuppressWarnings("unchecked")
+            final Constructor<TR> c = (Constructor<TR>) rowClass
+                    .getDeclaredConstructor(ABuilder.class);
+            return c.newInstance(this);
+        }
+        catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
     }
 }

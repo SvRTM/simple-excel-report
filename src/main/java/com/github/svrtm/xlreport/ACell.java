@@ -29,8 +29,8 @@ import org.apache.poi.ss.util.CellRangeAddress;
 public abstract class ACell<HB, TC> {
     private static int AUTOSIZE_MIN_LENGTH = 7;
 
-    final Row<HB> row;
-    final ABuilder<HB> builder;
+    final Row<HB, ?> row;
+    final ABuilder<HB, ?> builder;
 
     /**
      * This problem is caused by the fact that sometimes javac's implementation
@@ -48,7 +48,7 @@ public abstract class ACell<HB, TC> {
 
     boolean enableAutoSize;
 
-    ACell(final Row<HB> row) {
+    ACell(final Row<HB, ?> row) {
         this.row = row;
         this.builder = row.builder;
     }
@@ -67,7 +67,8 @@ public abstract class ACell<HB, TC> {
                 final int lastRow = region.getLastRow();
                 mergedCells = new ArrayList<Cell>(region.getNumberOfCells());
                 for (rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
-                    final Row<HB> row = builder.rowOrCreateIfAbsent(rowIndex);
+                    final Row<HB, ?> row =
+                                         builder.rowOrCreateIfAbsent(rowIndex);
                     for (int colIdx = firstCol; colIdx <= lastCol; colIdx++) {
                         final Cell mergedCell;
                         mergedCell = row.cellOrCreateIfAbsent(colIdx).poiCell;

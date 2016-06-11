@@ -34,7 +34,7 @@ import com.github.svrtm.xlreport.Font.Boldweight;
  */
 public abstract class ACellStyle<TC extends ACell<?, TC>, TCS extends ACellStyle<? extends ACell<?, TC>, TCS>> {
     final TC cell;
-    final ABuilder<?> builder;
+    final ABuilder<?, ?> builder;
 
     final Workbook wb;
 
