@@ -8,10 +8,10 @@ import org.junit.Test;
 
 import com.github.svrtm.xlreport.ACellStyle.Alignment;
 import com.github.svrtm.xlreport.Cell;
-import com.github.svrtm.xlreport.Report;
-import com.github.svrtm.xlreport.Report.Body;
-import com.github.svrtm.xlreport.Report.Final;
-import com.github.svrtm.xlreport.Report.Header;
+import com.github.svrtm.xlreport.Excel_97;
+import com.github.svrtm.xlreport.Excel_97.Body;
+import com.github.svrtm.xlreport.Excel_97.Header;
+import com.github.svrtm.xlreport.Final;
 import com.github.svrtm.xlreport.Row.INewCell;
 import com.github.svrtm.xlreport.Row97;
 
@@ -23,8 +23,8 @@ public class TestReportExcel97 {
         final int nMergedCells = 6;
         final int countRows = 150000;
 
-        Body bd = Report.EXCEL97.instanceBody(
-        new Report.Header() {
+        Body bd = Excel_97.instanceBody(
+        new Excel_97.Header() {
             public void prepareHeader() {
                 mergedRegion(0, 0, 0, nMergedCells-1)
                 .addNewRow()
@@ -189,8 +189,8 @@ public class TestReportExcel97 {
         final int secondDataCell = 3;
         final int iColumns[] = { 0, 1, 2, 3, 5, 6, 7 };
 
-        Body bd = Report.EXCEL97.instanceBody(
-        new Report.Header() {
+        Body bd = Excel_97.instanceBody(
+        new Excel_97.Header() {
             public void prepareHeader() {
                 replaceColor(IndexedColors.MAROON, (byte) 203, (byte) 234, (byte) 220)
                 .replaceColor(IndexedColors.PINK, (byte) 0xC5, (byte) 0xD9, (byte) 0xF1)

@@ -20,13 +20,13 @@ package com.github.svrtm.xlreport;
 /**
  * @author Artem.Smirnov
  */
-public class Row97<HB> extends Row<HB, Row97<HB>> {
+public class Row07<HB> extends Row<HB, Row07<HB>> {
 
-    Row97(final ABuilder<HB, Row97<HB>> aBuilder) {
+    Row07(final ABuilder<HB, Row07<HB>> aBuilder) {
         super(aBuilder);
     }
 
-    Row97(final ABuilder<HB, Row97<HB>> aBuilder, final int i,
+    Row07(final ABuilder<HB, Row07<HB>> aBuilder, final int i,
           final RowOperation rowOperation) {
         super(aBuilder, i, rowOperation);
     }

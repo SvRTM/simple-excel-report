@@ -20,7 +20,6 @@ package com.github.svrtm.xlreport;
 import static com.github.svrtm.xlreport.Row.RowOperation.CREATE;
 import static com.github.svrtm.xlreport.Row.RowOperation.CREATE_and_GET;
 import static com.github.svrtm.xlreport.Row.RowOperation.GET;
-import static java.lang.String.format;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -28,23 +27,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.HSSFPalette;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import com.github.svrtm.xlreport.Report.Header;
 import com.github.svrtm.xlreport.Row.RowOperation;
 
 /**
  * @author Artem.Smirnov
  */
 public abstract class ABuilder<HB, TR extends Row<HB, TR>> {
-    Header header;
+    AHeader<?, ?> header;
     Class<?> rowClass;
 
     Workbook wb;
@@ -224,34 +219,6 @@ public abstract class ABuilder<HB, TR extends Row<HB, TR>> {
         return (HB) this;
     }
 
-    /**
-     * Only for {@link HSSFWorkbook}
-     *
-     * @param i
-     *            - the palette index, between 0x8 to 0x40 inclusive
-     * @param red
-     *            - the RGB red component, between 0 and 255 inclusive
-     * @param green
-     *            - the RGB green component, between 0 and 255 inclusive
-     * @param blue
-     *            - the RGB blue component, between 0 and 255 inclusive
-     * @return this
-     */
-    @SuppressWarnings("unchecked")
-    public HB replaceColor(final IndexedColors color, final byte red,
-                           final byte green, final byte blue) {
-        if (!(wb instanceof HSSFWorkbook))
-            throw new ReportBuilderException(
-                    format("This operation is not supported for workbook %s",
-                            wb.getClass().getSimpleName()));
-
-        final HSSFWorkbook hssfwb = (HSSFWorkbook) wb;
-        final HSSFPalette palette = hssfwb.getCustomPalette();
-        palette.setColorAtIndex(color.index, red, green, blue);
-
-        return (HB) this;
-    }
-
     @SuppressWarnings("unchecked")
     public HB withAutoSizeColumn(final int column) {
         sheet.autoSizeColumn(column);
@@ -270,9 +237,7 @@ public abstract class ABuilder<HB, TR extends Row<HB, TR>> {
             return c.newInstance(this, i, oper);
         }
         catch (final Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
+            throw new ReportBuilderException(e);
         }
     }
 
@@ -284,9 +249,7 @@ public abstract class ABuilder<HB, TR extends Row<HB, TR>> {
             return c.newInstance(this);
         }
         catch (final Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
+            throw new ReportBuilderException(e);
         }
     }
 }
