@@ -20,15 +20,31 @@ package com.github.svrtm.xlreport;
 /**
  * @author Artem.Smirnov
  */
-final public class CellsStyle<HB, TR extends Row<HB, TR>>
-        extends ACellStyle<Cells<HB, TR>, CellsStyle<HB, TR>> {
+public class Font07<TCS extends ACellStyle<?, ?, ?>> extends Font<TCS> {
 
-    CellsStyle(final Cells<HB, TR> cells) {
-        super(cells);
+    Font07(final TCS cellStyle) {
+        super(cellStyle);
     }
 
-    @Override
-    public Cells<HB, TR> createStyle() {
-        return cell;
+    /**
+     * Set the color for the font in Standard Alpha Red Green Blue (ARGB or RGB)
+     * color value
+     */
+    public Font<TCS> color(final byte[] rgb) {
+        font_p.setColor(rgb);
+        return this;
+    }
+
+    /**
+     * Set the color for the font
+     * 
+     * @param red
+     * @param green
+     * @param blue
+     * @return
+     */
+    public Font<TCS> color(final byte red, final byte green, final byte blue) {
+        font_p.setColor(new byte[] { red, green, blue });
+        return this;
     }
 }

@@ -26,29 +26,17 @@ import org.apache.poi.ss.util.CellRangeAddress;
 /**
  * @author Artem.Smirnov
  */
-public abstract class ACell<HB, TC> {
+public abstract class ACell<HB, TC extends ACell<HB, TC>> {
     private static int AUTOSIZE_MIN_LENGTH = 7;
 
-    final Row<HB, ?> row;
+    final Row<HB, ?, ?, ?> row;
     final ABuilder<HB, ?> builder;
 
-    /**
-     * This problem is caused by the fact that sometimes javac's implementation
-     * of JLS3 15.12.2.8 ignores recursive bounds, sometimes not (as in this
-     * case). When recursive bounds contains wildcards, such bounds are included
-     * when computing uninferred type variables. This makes subsequent subtyping
-     * test (Integer <: Comparable<? super T> where T is a type-variable to be
-     * inferred).
-     * Will be fixed after 6369605 [JDK 1.7]
-     * (http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6369605)
-     */
-    // protected ACellStyle<? extends ACell<?, HB>> cellStyle;
-    @SuppressWarnings("rawtypes")
-    ACellStyle cellStyle;
+    ACellStyle<TC, ?, ?> cellStyle;
 
     boolean enableAutoSize;
 
-    ACell(final Row<HB, ?> row) {
+    ACell(final Row<HB, ?, ?, ?> row) {
         this.row = row;
         this.builder = row.builder;
     }
@@ -67,8 +55,8 @@ public abstract class ACell<HB, TC> {
                 final int lastRow = region.getLastRow();
                 mergedCells = new ArrayList<Cell>(region.getNumberOfCells());
                 for (rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
-                    final Row<HB, ?> row =
-                                         builder.rowOrCreateIfAbsent(rowIndex);
+                    final Row<HB, ?, ?, ?> row;
+                    row = builder.rowOrCreateIfAbsent(rowIndex);
                     for (int colIdx = firstCol; colIdx <= lastCol; colIdx++) {
                         final Cell mergedCell;
                         mergedCell = row.cellOrCreateIfAbsent(colIdx).poiCell;

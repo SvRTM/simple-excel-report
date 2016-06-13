@@ -27,8 +27,8 @@ import org.apache.poi.ss.usermodel.CellStyle;
 /**
  * @author Artem.Smirnov
  */
-final public class Cells<HB, TR extends Row<HB, TR>>
-        extends ACell<HB, Cells<HB, TR>> {
+public abstract class Cells<HB, TR extends Row<HB, TR, ?, TCs>, TCs extends Cells<HB, TR, TCs>>
+        extends ACell<HB, TCs> {
     private int columnWidth = -1;
     private int incrementValue = -1;
     private final int[] indexesCells;
@@ -78,27 +78,16 @@ final public class Cells<HB, TR extends Row<HB, TR>>
         return (TR) row;
     }
 
-    /**
-     * Style is applied to cells without styles. Will be ignored by all of the
-     * cells with styles
-     *
-     * @return The object {@link CellsStyle}
-     */
     @SuppressWarnings("unchecked")
-    public CellsStyle<HB, TR> prepareStyle() {
-        if (cellStyle == null)
-            cellStyle = new CellsStyle<HB, TR>(this);
-        return (CellsStyle<HB, TR>) cellStyle;
-    }
-
-    public Cells<HB, TR> whereColumnWidthIs(final int columnWidth) {
+    public TCs whereColumnWidthIs(final int columnWidth) {
         this.columnWidth = columnWidth * 256;
-        return this;
+        return (TCs) this;
     }
 
-    public Cells<HB, TR> withInitialValueOfIncrement(final int start) {
+    @SuppressWarnings("unchecked")
+    public TCs withInitialValueOfIncrement(final int start) {
         incrementValue = start;
-        return this;
+        return (TCs) this;
     }
 
 }

@@ -1,6 +1,6 @@
 /**
  * <pre>
- * Copyright © 2012,2016 Artem Smirnov
+ * Copyright © 2016 Artem Smirnov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,15 @@ package com.github.svrtm.xlreport;
 /**
  * @author Artem.Smirnov
  */
-final public class CellStyle<HB, TR extends Row<HB, TR>>
-        extends ACellStyle<Cell<HB, TR>, CellStyle<HB, TR>> {
+final public class CellStyle07<HB> extends
+        ACellStyle07<Cell07<HB>, CellStyle07<HB>, Font07<CellStyle07<HB>>> {
 
-    CellStyle(final Cell<HB, TR> cell) {
+    CellStyle07(final Cell07<HB> cell) {
         super(cell);
     }
 
     @Override
-    public Cell<HB, TR> createStyle() {
+    public Cell07<HB> createStyle() {
         final org.apache.poi.ss.usermodel.CellStyle poiStyle = getStyle();
         cell.poiCell.setCellStyle(poiStyle);
 

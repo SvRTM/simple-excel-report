@@ -20,7 +20,8 @@ package com.github.svrtm.xlreport;
 /**
  * @author Artem.Smirnov
  */
-public class Row97<HB> extends Row<HB, Row97<HB>> {
+final public class Row97<HB>
+        extends Row<HB, Row97<HB>, Cell97<HB>, Cells97<HB>> {
 
     Row97(final ABuilder<HB, Row97<HB>> aBuilder) {
         super(aBuilder);

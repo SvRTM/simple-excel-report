@@ -20,15 +20,19 @@ package com.github.svrtm.xlreport;
 /**
  * @author Artem.Smirnov
  */
-final public class Row07<HB>
-        extends Row<HB, Row07<HB>, Cell07<HB>, Cells07<HB>> {
+final public class CellStyle07XL<HB> extends
+        ACellStyle07<Cell07XL<HB>, CellStyle07XL<HB>, Font07<CellStyle07XL<HB>>> {
 
-    Row07(final ABuilder<HB, Row07<HB>> aBuilder) {
-        super(aBuilder);
+    CellStyle07XL(final Cell07XL<HB> cell) {
+        super(cell);
     }
 
-    Row07(final ABuilder<HB, Row07<HB>> aBuilder, final int i,
-          final RowOperation rowOperation) {
-        super(aBuilder, i, rowOperation);
+    @Override
+    public Cell07XL<HB> createStyle() {
+        final org.apache.poi.ss.usermodel.CellStyle poiStyle = getStyle();
+        cell.poiCell.setCellStyle(poiStyle);
+
+        return cell;
     }
+
 }

@@ -17,14 +17,18 @@
  */
 package com.github.svrtm.xlreport;
 
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+
 /**
  * @author Artem.Smirnov
  */
 final class Font_p {
-    private short fontHeightInPoints;
-    private short color;
-    private boolean italic;
-    private short boldweight;
+    private Short fontHeightInPoints;
+    private Short color;
+    private XSSFColor xssfColor;
+    private Boolean italic;
+    private Short boldweight;
 
     /**
      * @param fontHeightInPoints
@@ -40,6 +44,16 @@ final class Font_p {
      */
     public void setColor(final short color) {
         this.color = color;
+    }
+
+    /**
+     * Sets the Red Green Blue or Alpha Red Green Blue
+     *
+     * @param rgb
+     *            the color to set
+     */
+    public void setColor(final byte[] rgb) {
+        xssfColor = new XSSFColor(rgb);
     }
 
     /**
@@ -66,10 +80,15 @@ final class Font_p {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + boldweight;
-        result = prime * result + color;
-        result = prime * result + fontHeightInPoints;
-        result = prime * result + (italic ? 1231 : 1237);
+        result = prime * result
+                 + (boldweight == null ? 0 : boldweight.hashCode());
+        result = prime * result + (color == null ? 0 : color.hashCode());
+        result = prime * result
+                 + (fontHeightInPoints == null ? 0
+                                               : fontHeightInPoints.hashCode());
+        result = prime * result + (italic == null ? 0 : italic.hashCode());
+        result =
+               prime * result + (xssfColor == null ? 0 : xssfColor.hashCode());
         return result;
     }
 
@@ -83,24 +102,54 @@ final class Font_p {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof Font_p))
+        if (getClass() != obj.getClass())
             return false;
         final Font_p other = (Font_p) obj;
-        if (boldweight != other.boldweight)
+        if (boldweight == null) {
+            if (other.boldweight != null)
+                return false;
+        }
+        else if (!boldweight.equals(other.boldweight))
             return false;
-        if (color != other.color)
+        if (color == null) {
+            if (other.color != null)
+                return false;
+        }
+        else if (!color.equals(other.color))
             return false;
-        if (fontHeightInPoints != other.fontHeightInPoints)
+        if (fontHeightInPoints == null) {
+            if (other.fontHeightInPoints != null)
+                return false;
+        }
+        else if (!fontHeightInPoints.equals(other.fontHeightInPoints))
             return false;
-        if (italic != other.italic)
+        if (italic == null) {
+            if (other.italic != null)
+                return false;
+        }
+        else if (!italic.equals(other.italic))
+            return false;
+        if (xssfColor == null) {
+            if (other.xssfColor != null)
+                return false;
+        }
+        else if (!xssfColor.equals(other.xssfColor))
             return false;
         return true;
     }
 
     public void copyTo(final org.apache.poi.ss.usermodel.Font poiFont) {
-        poiFont.setFontHeightInPoints(fontHeightInPoints);
-        poiFont.setColor(color);
-        poiFont.setItalic(italic);
-        poiFont.setBoldweight(boldweight);
+        if (fontHeightInPoints != null)
+            poiFont.setFontHeightInPoints(fontHeightInPoints);
+        if (xssfColor == null) {
+            if (color != null)
+                poiFont.setColor(color);
+        }
+        else
+            ((XSSFFont) poiFont).setColor(xssfColor);
+        if (italic != null)
+            poiFont.setItalic(italic);
+        if (boldweight != null)
+            poiFont.setBoldweight(boldweight);
     }
 }

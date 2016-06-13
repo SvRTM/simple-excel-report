@@ -2,29 +2,28 @@ package com.github.svrtm.xlreport.test;
 
 import java.io.FileOutputStream;
 
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
 import com.github.svrtm.xlreport.ACellStyle.Alignment;
-import com.github.svrtm.xlreport.Cell;
-import com.github.svrtm.xlreport.Excel_97;
-import com.github.svrtm.xlreport.Excel_97.Body;
-import com.github.svrtm.xlreport.Excel_97.Header;
+import com.github.svrtm.xlreport.ACellStyle.FillPattern;
+import com.github.svrtm.xlreport.Cell.INewCell;
+import com.github.svrtm.xlreport.Cell07;
+import com.github.svrtm.xlreport.Excel_2007;
+import com.github.svrtm.xlreport.Excel_2007.Body;
+import com.github.svrtm.xlreport.Excel_2007.Header;
 import com.github.svrtm.xlreport.Final;
-import com.github.svrtm.xlreport.Row.INewCell;
-import com.github.svrtm.xlreport.Row97;
 
 
-public class TestReportExcel97 {
+public class TestReportExcel_2007 {
 
     @Test
     public void testBigReport() throws Exception  {
         final int nMergedCells = 6;
         final int countRows = 150000;
 
-        Body bd = Excel_97.instanceBody(
-        new Excel_97.Header() {
+        Body bd = Excel_2007.instanceBody(
+        new Excel_2007.Header() {
             public void prepareHeader() {
                 mergedRegion(0, 0, 0, nMergedCells-1)
                 .addNewRow()
@@ -172,13 +171,13 @@ public class TestReportExcel97 {
         .instanceFinal();
 
         Workbook wb = report.getWorkbook();
-        FileOutputStream out = new FileOutputStream("target/bigReport.xls");
+        FileOutputStream out = new FileOutputStream("target/bigReport_07.xlsx");
         wb.write(out);
         out.close();
     }
 
     @Test
-    public void testXLReport_3() throws Exception {
+    public void testColorReport() throws Exception {
         final String[] headerValueCells = { "Header 1", "Header 2",
                                             "Header 3", "Header 4",
                                             //
@@ -189,12 +188,10 @@ public class TestReportExcel97 {
         final int secondDataCell = 3;
         final int iColumns[] = { 0, 1, 2, 3, 5, 6, 7 };
 
-        Body bd = Excel_97.instanceBody(
-        new Excel_97.Header() {
+        Body bd = Excel_2007.instanceBody(
+        new Excel_2007.Header() {
             public void prepareHeader() {
-                replaceColor(IndexedColors.MAROON, (byte) 203, (byte) 234, (byte) 220)
-                .replaceColor(IndexedColors.PINK, (byte) 0xC5, (byte) 0xD9, (byte) 0xF1)
-                .mergedRegion(0, 0, 0, firstDataCell + secondDataCell)
+                mergedRegion(0, 0, 0, firstDataCell + secondDataCell)
                 .mergedRegion(1, 1, 0, firstDataCell - 1)
                 .mergedRegion(1, 1, firstDataCell + 1, firstDataCell + 1 + secondDataCell - 1)
                 .addNewRow()
@@ -202,9 +199,10 @@ public class TestReportExcel97 {
                         .withValue("Title 1")
                         .prepareStyle()
                             .title()
-                            .headerWithForegroundColor(IndexedColors.MAROON)
+                            .headerWithForegroundColor((byte) 203, (byte) 234, (byte) 220 )
                             .addFont()
-                                .color(IndexedColors.DARK_RED)
+                                .color((byte) 0xA5, (byte) 0x2A, (byte) 0x2A)
+                                .heightInPoints((short) 18)
                             .configureFont()
                         .createStyle()
                     .createCell()
@@ -227,7 +225,7 @@ public class TestReportExcel97 {
                     .cells()
                         .prepareStyle()
                             .title()
-                            .headerWithForegroundColor(IndexedColors.PINK)
+                            .headerWithForegroundColor((byte) 0xC5, (byte) 0xD9, (byte) 0xF1)
                         .createStyle()
                     .configureCells()
                 .configureRow()
@@ -240,10 +238,10 @@ public class TestReportExcel97 {
                 .iColumnWidthIs(7, 25)
                 //
                 .addNewRow()
-                    .addAndConfigureCells(new INewCell<Header, Row97<Header>>() {
+                    .addAndConfigureCells(new INewCell<Cell07<Header>>() {
                         private int i = 0;
 
-                        public void iCell(final Cell<Header, Row97<Header>> newCell) {
+                        public void iCell(final Cell07<Header> newCell) {
                             newCell.withValue(headerValueCells[i++]);
                         }
                     }, iColumns)
@@ -272,17 +270,32 @@ public class TestReportExcel97 {
             bd
             .addNewRow()
                 .prepareNewCell(0)
-                    .withValue("a")
+                    .withValue("A" + (5+i))
                     .prepareStyle()
                         .alignment(Alignment.CENTER)
                         .defaultEdging()
+                        .fillForegroundColor( i % 2 == 0 ? new byte[] { (byte) 0xB0, (byte) 0xC4, (byte) 0xDE }
+                                                         : new byte[] { (byte) 0x97, (byte) 0xA8, (byte) 0xBF })
+                        .fillPattern(FillPattern.SOLID_FOREGROUND)
                     .createStyle()
                 .createCell()
                 .prepareNewCell(1)
-                    .withValue("s")
+                    .withValue("B" + (5+i))
+                    .prepareStyle()
+                        .defaultEdging()
+                        .fillForegroundColor( i % 2 != 0 ? new byte[] { (byte) 0xB0, (byte) 0xC4, (byte) 0xDE }
+                                                         : new byte[] { (byte) 0x97, (byte) 0xA8, (byte) 0xBF })
+                        .fillPattern(FillPattern.SOLID_FOREGROUND)
+                    .createStyle()
                 .createCell()
                 .prepareNewCell(2)
-                    .withValue("d")
+                    .withValue("C" + (5+i))
+                    .prepareStyle()
+                        .defaultEdging()
+                        .fillForegroundColor( i % 2 == 0 ? new byte[] { (byte) 0xB0, (byte) 0xC4, (byte) 0xDE }
+                                                         : new byte[] { (byte) 0x97, (byte) 0xA8, (byte) 0xBF })
+                        .fillPattern(FillPattern.SOLID_FOREGROUND)
+                    .createStyle()
                 .createCell()
                 .prepareNewCell(3)
                     .withValue(i)
@@ -290,14 +303,14 @@ public class TestReportExcel97 {
                 .createCell()
                 //
                 .prepareNewCell(5)
-                    .withValue("q")
+                    .withValue("F" + (5+i))
                 .createCell()
                 .prepareNewCell(6)
                     .withValue(i)
                     .useDecimalFormat()
                 .createCell()
                 .prepareNewCell(7)
-                    .withValue("w")
+                    .withValue("H" + (5+i))
                 .createCell()
                 .cells()
                     .prepareStyle()
@@ -309,7 +322,7 @@ public class TestReportExcel97 {
 
         final Final report = bd.instanceFinal();
         final Workbook wb = report.getWorkbook();
-        final FileOutputStream fout = new FileOutputStream("target/colorReport.xls");
+        final FileOutputStream fout = new FileOutputStream("target/colorReport_07.xlsx");
         wb.write(fout);
         fout.close();
     }

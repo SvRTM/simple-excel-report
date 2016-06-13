@@ -40,10 +40,11 @@ interface IHeader {
     void prepareHeader();
 }
 
-abstract class AHeader<H, TR extends Row<H, TR>> extends ABuilder<H, TR>
+abstract class AHeader<H, TR extends Row<H, TR, ?, ?>> extends ABuilder<H, TR>
         implements IHeader {}
 
-abstract class ABody<HB, TR extends Row<HB, TR>> extends ABuilder<HB, TR> {
+abstract class ABody<HB, TR extends Row<HB, TR, ?, ?>>
+        extends ABuilder<HB, TR> {
 
     void init(final AHeader<?, ?> header) {
         this.header = header;

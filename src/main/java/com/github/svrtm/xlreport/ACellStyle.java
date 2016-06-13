@@ -23,6 +23,9 @@ import static org.apache.poi.ss.usermodel.CellStyle.ALIGN_LEFT;
 import static org.apache.poi.ss.usermodel.CellStyle.BORDER_THIN;
 import static org.apache.poi.ss.usermodel.IndexedColors.BLACK;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.ParameterizedType;
+
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -32,7 +35,7 @@ import com.github.svrtm.xlreport.Font.Boldweight;
 /**
  * @author Artem.Smirnov
  */
-public abstract class ACellStyle<TC extends ACell<?, TC>, TCS extends ACellStyle<? extends ACell<?, TC>, TCS>> {
+public abstract class ACellStyle<TC extends ACell<?, ?>, TCS extends ACellStyle<TC, TCS, TF>, TF extends Font<TCS>> {
     final TC cell;
     final ABuilder<?, ?> builder;
 
@@ -197,8 +200,20 @@ public abstract class ACellStyle<TC extends ACell<?, TC>, TCS extends ACellStyle
     }
 
     @SuppressWarnings("unchecked")
-    public Font<TCS> addFont() {
-        return new Font<TCS>((TCS) this);
+    public TF addFont() {
+        final ParameterizedType pt = (ParameterizedType) getClass()
+                .getGenericSuperclass();
+        final ParameterizedType paramType = (ParameterizedType) pt
+                .getActualTypeArguments()[2];
+        final Class<TF> fontClass = (Class<TF>) paramType.getRawType();
+        try {
+            final Constructor<TF> c = fontClass
+                    .getDeclaredConstructor(ACellStyle.class);
+            return c.newInstance(this);
+        }
+        catch (final Exception e) {
+            throw new ReportBuilderException(e);
+        }
     }
 
     /**
@@ -256,9 +271,14 @@ public abstract class ACellStyle<TC extends ACell<?, TC>, TCS extends ACellStyle
      */
     @SuppressWarnings("unchecked")
     public TCS headerWithForegroundColor(final IndexedColors color) {
-        header();
-        fillForegroundColor(color).fillPattern(FillPattern.SOLID_FOREGROUND);
+        fillForegroundColor(color);
+        headerWithForegroundColor();
         return (TCS) this;
+    }
+
+    void headerWithForegroundColor() {
+        header();
+        fillPattern(FillPattern.SOLID_FOREGROUND);
     }
 
     /**
@@ -291,9 +311,14 @@ public abstract class ACellStyle<TC extends ACell<?, TC>, TCS extends ACellStyle
      */
     @SuppressWarnings("unchecked")
     public TCS totalWithForegroundColor(final IndexedColors fg) {
-        total();
-        fillForegroundColor(fg).fillPattern(FillPattern.SOLID_FOREGROUND);
+        fillForegroundColor(fg);
+        totalWithForegroundColor();
         return (TCS) this;
+    }
+
+    void totalWithForegroundColor() {
+        total();
+        fillPattern(FillPattern.SOLID_FOREGROUND);
     }
 
 }

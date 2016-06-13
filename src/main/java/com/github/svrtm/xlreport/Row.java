@@ -22,37 +22,26 @@ import static com.github.svrtm.xlreport.Row.RowOperation.CREATE_and_GET;
 import static java.lang.String.format;
 import static java.util.Arrays.sort;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import com.github.svrtm.xlreport.Cell.CellOperation;
+import com.github.svrtm.xlreport.Cell.INewCell;
 
 /**
  * @author Artem.Smirnov
  */
-public class Row<HB, TR extends Row<HB, TR>> {
+public abstract class Row<HB, TR extends Row<HB, TR, TC, TCs>, TC extends Cell<HB, TR, TC>, TCs extends Cells<HB, TR, TCs>> {
     ABuilder<HB, TR> builder;
     org.apache.poi.ss.usermodel.Row poiRow;
 
-    Map<Integer, Cell<HB, TR>> cells = new HashMap<Integer, Cell<HB, TR>>();
+    Map<Integer, TC> cells = new HashMap<Integer, TC>();
 
     enum RowOperation {
         CREATE, GET, CREATE_and_GET
-    }
-
-    /**
-     * used in {@link Row#addAndConfigureCells(int, int, INewCell)
-     * Row#addAndBuildCells(ICallback, int...) * }
-     *
-     * @author Artem.Smirnov
-     */
-    public interface INewCell<HB, TR extends Row<HB, TR>> {
-        /**
-         * @param cell
-         *            - new cell
-         */
-        void iCell(final Cell<HB, TR> cell);
     }
 
     Row(final ABuilder<HB, TR> aBuilder) {
@@ -91,7 +80,7 @@ public class Row<HB, TR extends Row<HB, TR>> {
      *            - 0 based column number
      * @return
      */
-    public Cell<HB, TR> cell(final int i) {
+    public TC cell(final int i) {
         return createCell(i, CellOperation.GET);
     }
 
@@ -102,7 +91,7 @@ public class Row<HB, TR extends Row<HB, TR>> {
      *            - 0 based column number
      * @return
      */
-    public Cell<HB, TR> cellOrCreateIfAbsent(final int i) {
+    public TC cellOrCreateIfAbsent(final int i) {
         return createCell(i, CellOperation.CREATE_and_GET);
     }
 
@@ -113,7 +102,7 @@ public class Row<HB, TR extends Row<HB, TR>> {
      *            - the column number this cell represents
      * @return
      */
-    public Cell<HB, TR> prepareNewCell(final int i) {
+    public TC prepareNewCell(final int i) {
         return createCell(i, CellOperation.CREATE);
     }
 
@@ -128,7 +117,7 @@ public class Row<HB, TR extends Row<HB, TR>> {
      */
     @SuppressWarnings("unchecked")
     public TR addAndConfigureCells(final int firstCell, final int lastCell,
-                                   final INewCell<HB, TR> callback) {
+                                   final INewCell<TC> callback) {
         for (int i = firstCell; i <= lastCell; i++)
             callbackCell(i, callback);
         return (TR) this;
@@ -144,7 +133,7 @@ public class Row<HB, TR extends Row<HB, TR>> {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public TR addAndConfigureCells(final INewCell<HB, TR> callback,
+    public TR addAndConfigureCells(final INewCell<TC> callback,
                                    final int... indexesCells) {
         for (final int i : indexesCells)
             callbackCell(i, callback);
@@ -158,21 +147,26 @@ public class Row<HB, TR extends Row<HB, TR>> {
      *            - the column numbers
      * @return
      */
-    @SuppressWarnings("unchecked")
-    public Cells<HB, TR> addCells(final int... indexesCells) {
-        return new Cells<HB, TR>((TR) this, indexesCells);
+    /**
+     * Create new cells within the row
+     *
+     * @param indexesCells
+     *            - the column numbers
+     * @return
+     */
+    public TCs addCells(final int... indexesCells) {
+        return createCells(indexesCells);
     }
 
-    @SuppressWarnings("unchecked")
-    public Cells<HB, TR> addCells(final int n) {
+    public TCs addCells(final int n) {
         final int[] indexesCells = new int[n];
         for (int i = 0; i < n; i++)
             indexesCells[i] = i;
-        return new Cells<HB, TR>((TR) this, indexesCells);
+
+        return createCells(indexesCells);
     }
 
-    @SuppressWarnings("unchecked")
-    public Cells<HB, TR> cells() {
+    public TCs cells() {
         final Set<Integer> keys = cells.keySet();
         if (keys.size() == 0)
             throw new ReportBuilderException("Cells were not found!");
@@ -183,7 +177,7 @@ public class Row<HB, TR extends Row<HB, TR>> {
             indexesCells[i++] = key;
         sort(indexesCells);
 
-        return new Cells<HB, TR>((TR) this, indexesCells);
+        return createCells(indexesCells);
     }
 
     /**
@@ -199,22 +193,50 @@ public class Row<HB, TR extends Row<HB, TR>> {
         return (TR) this;
     }
 
-    @SuppressWarnings("unchecked")
-    private Cell<HB, TR> createCell(final int i,
-                                    final CellOperation cellOperation) {
-        Cell<HB, TR> cell = cells.get(i);
+    private TC createCell(final int i, final CellOperation cellOperation) {
+        TC cell = cells.get(i);
         if (cell == null) {
-            cell = new Cell<HB, TR>((TR) this, i, cellOperation);
+            final ParameterizedType pt = (ParameterizedType) getClass()
+                    .getGenericSuperclass();
+            final ParameterizedType paramType = (ParameterizedType) pt
+                    .getActualTypeArguments()[2];
+            @SuppressWarnings("unchecked")
+            final Class<TC> cellClass = (Class<TC>) paramType.getRawType();
+            try {
+                final Constructor<TC> c = cellClass.getDeclaredConstructor(
+                        getClass(), int.class, CellOperation.class);
+                cell = c.newInstance(this, i, cellOperation);
+            }
+            catch (final Exception e) {
+                throw new ReportBuilderException(e);
+            }
             cells.put(i, cell);
         }
 
         return cell;
     }
 
-    private void callbackCell(final int i, final INewCell<HB, TR> callback) {
-        final Cell<HB, TR> newCell = prepareNewCell(i);
+    private void callbackCell(final int i, final INewCell<TC> callback) {
+        final TC newCell = prepareNewCell(i);
         callback.iCell(newCell);
         newCell.createCell();
+    }
+
+    private TCs createCells(final int... indexesCells) {
+        final ParameterizedType pt = (ParameterizedType) getClass()
+                .getGenericSuperclass();
+        final ParameterizedType paramType = (ParameterizedType) pt
+                .getActualTypeArguments()[3];
+        @SuppressWarnings("unchecked")
+        final Class<TCs> cellsClass = (Class<TCs>) paramType.getRawType();
+        try {
+            final Constructor<TCs> c = cellsClass
+                    .getDeclaredConstructor(getClass(), int[].class);
+            return c.newInstance(this, indexesCells);
+        }
+        catch (final Exception e) {
+            throw new ReportBuilderException(e);
+        }
     }
 
     /**

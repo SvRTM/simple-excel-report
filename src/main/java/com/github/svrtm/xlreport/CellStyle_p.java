@@ -18,29 +18,32 @@
 package com.github.svrtm.xlreport;
 
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 
 /**
  * @author Artem.Smirnov
  */
 final class CellStyle_p {
-    private short verticalAlignment;
-    private short alignment;
+    private Short verticalAlignment;
+    private Short alignment;
 
-    private short borderBottom;
-    private short bottomBorderColor;
-    private short borderLeft;
-    private short leftBorderColor;
-    private short borderRight;
-    private short rightBorderColor;
-    private short borderTop;
-    private short topBorderColor;
+    private Short borderBottom;
+    private Short bottomBorderColor;
+    private Short borderLeft;
+    private Short leftBorderColor;
+    private Short borderRight;
+    private Short rightBorderColor;
+    private Short borderTop;
+    private Short topBorderColor;
 
-    private boolean wrapText;
+    private Boolean wrapText;
 
-    private short fillPattern;
-    private short fillForegroundColor;
+    private Short fillPattern;
+    private Short fillForegroundColor;
+    private XSSFColor xssfFgColor;
 
-    private short fmt;
+    private Short fmt;
 
     Font_p font_p;
 
@@ -149,10 +152,20 @@ final class CellStyle_p {
     }
 
     /**
+     * Sets the Red Green Blue or Alpha Red Green Blue
+     *
+     * @param fgRgb
+     *            the fillForegroundColor to set
+     */
+    public void setFillForegroundColor(final byte[] fgRgb) {
+        xssfFgColor = new XSSFColor(fgRgb);
+    }
+
+    /**
      * @return
      *         get the index of the format
      */
-    public short getDataFormat() {
+    public Short getDataFormat() {
         return fmt;
     }
 
@@ -174,21 +187,39 @@ final class CellStyle_p {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + alignment;
-        result = prime * result + borderBottom;
-        result = prime * result + borderLeft;
-        result = prime * result + borderRight;
-        result = prime * result + borderTop;
-        result = prime * result + bottomBorderColor;
-        result = prime * result + fillForegroundColor;
-        result = prime * result + fillPattern;
-        result = prime * result + fmt;
+        result =
+               prime * result + (alignment == null ? 0 : alignment.hashCode());
+        result = prime * result
+                 + (borderBottom == null ? 0 : borderBottom.hashCode());
+        result = prime * result
+                 + (borderLeft == null ? 0 : borderLeft.hashCode());
+        result = prime * result
+                 + (borderRight == null ? 0 : borderRight.hashCode());
+        result =
+               prime * result + (borderTop == null ? 0 : borderTop.hashCode());
+        result = prime * result
+                 + (bottomBorderColor == null ? 0
+                                              : bottomBorderColor.hashCode());
+        result = prime * result
+                 + (fillForegroundColor == null ? 0
+                                                : fillForegroundColor
+                                                        .hashCode());
+        result = prime * result
+                 + (fillPattern == null ? 0 : fillPattern.hashCode());
+        result = prime * result + (fmt == null ? 0 : fmt.hashCode());
         result = prime * result + (font_p == null ? 0 : font_p.hashCode());
-        result = prime * result + leftBorderColor;
-        result = prime * result + rightBorderColor;
-        result = prime * result + topBorderColor;
-        result = prime * result + verticalAlignment;
-        result = prime * result + (wrapText ? 1231 : 1237);
+        result = prime * result
+                 + (leftBorderColor == null ? 0 : leftBorderColor.hashCode());
+        result = prime * result
+                 + (rightBorderColor == null ? 0 : rightBorderColor.hashCode());
+        result = prime * result
+                 + (topBorderColor == null ? 0 : topBorderColor.hashCode());
+        result = prime * result
+                 + (verticalAlignment == null ? 0
+                                              : verticalAlignment.hashCode());
+        result = prime * result + (wrapText == null ? 0 : wrapText.hashCode());
+        result = prime * result
+                 + (xssfFgColor == null ? 0 : xssfFgColor.hashCode());
         return result;
     }
 
@@ -202,26 +233,62 @@ final class CellStyle_p {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof CellStyle_p))
+        if (getClass() != obj.getClass())
             return false;
         final CellStyle_p other = (CellStyle_p) obj;
-        if (alignment != other.alignment)
+        if (alignment == null) {
+            if (other.alignment != null)
+                return false;
+        }
+        else if (!alignment.equals(other.alignment))
             return false;
-        if (borderBottom != other.borderBottom)
+        if (borderBottom == null) {
+            if (other.borderBottom != null)
+                return false;
+        }
+        else if (!borderBottom.equals(other.borderBottom))
             return false;
-        if (borderLeft != other.borderLeft)
+        if (borderLeft == null) {
+            if (other.borderLeft != null)
+                return false;
+        }
+        else if (!borderLeft.equals(other.borderLeft))
             return false;
-        if (borderRight != other.borderRight)
+        if (borderRight == null) {
+            if (other.borderRight != null)
+                return false;
+        }
+        else if (!borderRight.equals(other.borderRight))
             return false;
-        if (borderTop != other.borderTop)
+        if (borderTop == null) {
+            if (other.borderTop != null)
+                return false;
+        }
+        else if (!borderTop.equals(other.borderTop))
             return false;
-        if (bottomBorderColor != other.bottomBorderColor)
+        if (bottomBorderColor == null) {
+            if (other.bottomBorderColor != null)
+                return false;
+        }
+        else if (!bottomBorderColor.equals(other.bottomBorderColor))
             return false;
-        if (fillForegroundColor != other.fillForegroundColor)
+        if (fillForegroundColor == null) {
+            if (other.fillForegroundColor != null)
+                return false;
+        }
+        else if (!fillForegroundColor.equals(other.fillForegroundColor))
             return false;
-        if (fillPattern != other.fillPattern)
+        if (fillPattern == null) {
+            if (other.fillPattern != null)
+                return false;
+        }
+        else if (!fillPattern.equals(other.fillPattern))
             return false;
-        if (fmt != other.fmt)
+        if (fmt == null) {
+            if (other.fmt != null)
+                return false;
+        }
+        else if (!fmt.equals(other.fmt))
             return false;
         if (font_p == null) {
             if (other.font_p != null)
@@ -229,37 +296,81 @@ final class CellStyle_p {
         }
         else if (!font_p.equals(other.font_p))
             return false;
-        if (leftBorderColor != other.leftBorderColor)
+        if (leftBorderColor == null) {
+            if (other.leftBorderColor != null)
+                return false;
+        }
+        else if (!leftBorderColor.equals(other.leftBorderColor))
             return false;
-        if (rightBorderColor != other.rightBorderColor)
+        if (rightBorderColor == null) {
+            if (other.rightBorderColor != null)
+                return false;
+        }
+        else if (!rightBorderColor.equals(other.rightBorderColor))
             return false;
-        if (topBorderColor != other.topBorderColor)
+        if (topBorderColor == null) {
+            if (other.topBorderColor != null)
+                return false;
+        }
+        else if (!topBorderColor.equals(other.topBorderColor))
             return false;
-        if (verticalAlignment != other.verticalAlignment)
+        if (verticalAlignment == null) {
+            if (other.verticalAlignment != null)
+                return false;
+        }
+        else if (!verticalAlignment.equals(other.verticalAlignment))
             return false;
-        if (wrapText != other.wrapText)
+        if (wrapText == null) {
+            if (other.wrapText != null)
+                return false;
+        }
+        else if (!wrapText.equals(other.wrapText))
+            return false;
+        if (xssfFgColor == null) {
+            if (other.xssfFgColor != null)
+                return false;
+        }
+        else if (!xssfFgColor.equals(other.xssfFgColor))
             return false;
         return true;
     }
 
     public void copyTo(final CellStyle poiStyle) {
-        poiStyle.setVerticalAlignment(verticalAlignment);
-        poiStyle.setAlignment(alignment);
+        if (verticalAlignment != null)
+            poiStyle.setVerticalAlignment(verticalAlignment);
+        if (alignment != null)
+            poiStyle.setAlignment(alignment);
 
-        poiStyle.setBorderBottom(borderBottom);
-        poiStyle.setBottomBorderColor(bottomBorderColor);
-        poiStyle.setBorderLeft(borderLeft);
-        poiStyle.setLeftBorderColor(leftBorderColor);
-        poiStyle.setBorderRight(borderRight);
-        poiStyle.setRightBorderColor(rightBorderColor);
-        poiStyle.setBorderTop(borderTop);
-        poiStyle.setTopBorderColor(topBorderColor);
+        if (borderBottom != null)
+            poiStyle.setBorderBottom(borderBottom);
+        if (bottomBorderColor != null)
+            poiStyle.setBottomBorderColor(bottomBorderColor);
+        if (borderLeft != null)
+            poiStyle.setBorderLeft(borderLeft);
+        if (leftBorderColor != null)
+            poiStyle.setLeftBorderColor(leftBorderColor);
+        if (borderRight != null)
+            poiStyle.setBorderRight(borderRight);
+        if (rightBorderColor != null)
+            poiStyle.setRightBorderColor(rightBorderColor);
+        if (borderTop != null)
+            poiStyle.setBorderTop(borderTop);
+        if (topBorderColor != null)
+            poiStyle.setTopBorderColor(topBorderColor);
 
-        poiStyle.setWrapText(wrapText);
+        if (wrapText != null)
+            poiStyle.setWrapText(wrapText);
 
-        poiStyle.setFillPattern(fillPattern);
-        poiStyle.setFillForegroundColor(fillForegroundColor);
+        if (fillPattern != null)
+            poiStyle.setFillPattern(fillPattern);
+        if (xssfFgColor == null) {
+            if (fillForegroundColor != null)
+                poiStyle.setFillForegroundColor(fillForegroundColor);
+        }
+        else
+            ((XSSFCellStyle) poiStyle).setFillForegroundColor(xssfFgColor);
 
-        poiStyle.setDataFormat(fmt);
+        if (fmt != null)
+            poiStyle.setDataFormat(fmt);
     }
 }

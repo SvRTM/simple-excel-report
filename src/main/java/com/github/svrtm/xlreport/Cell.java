@@ -34,12 +34,25 @@ import org.apache.poi.ss.usermodel.RichTextString;
 /**
  * @author Artem.Smirnov
  */
-final public class Cell<HB, TR extends Row<HB, TR>>
-        extends ACell<HB, Cell<HB, TR>> {
+public abstract class Cell<HB, TR extends Row<HB, TR, TC, ?>, TC extends Cell<HB, TR, TC>>
+        extends ACell<HB, TC> {
     private boolean decimalFormat;
     private BigDecimal bigDecimalValue;
     private final CreationHelper creationHelper;
     final org.apache.poi.ss.usermodel.Cell poiCell;
+
+    /**
+     * used in {@link Row#addAndConfigureCells(int, int, INewCell)}
+     *
+     * @author Artem.Smirnov
+     */
+    public interface INewCell<TC> {
+        /**
+         * @param cell
+         *            - new cell
+         */
+        void iCell(final TC cell);
+    }
 
     enum CellOperation {
         CREATE, GET, CREATE_and_GET
@@ -71,45 +84,45 @@ final public class Cell<HB, TR extends Row<HB, TR>>
     }
 
     @SuppressWarnings("unchecked")
-    public CellStyle<HB, TR> prepareStyle() {
-        if (cellStyle == null)
-            cellStyle = new CellStyle<HB, TR>(this);
-        return (CellStyle<HB, TR>) cellStyle;
-    }
-
-    public Cell<HB, TR> withValue(final String value) {
+    public TC withValue(final String value) {
         poiCell.setCellValue(value);
-        return this;
+        return (TC) this;
     }
 
-    public Cell<HB, TR> withRichText(final String value) {
+    @SuppressWarnings("unchecked")
+    public TC withRichText(final String value) {
         poiCell.setCellValue(creationHelper.createRichTextString(value));
-        return this;
+        return (TC) this;
     }
 
-    public Cell<HB, TR> withRichText(final RichTextString value) {
+    @SuppressWarnings("unchecked")
+    public TC withRichText(final RichTextString value) {
         poiCell.setCellValue(value);
-        return this;
+        return (TC) this;
     }
 
-    public Cell<HB, TR> withValue(final int value) {
+    @SuppressWarnings("unchecked")
+    public TC withValue(final int value) {
         poiCell.setCellValue(value);
-        return this;
+        return (TC) this;
     }
 
-    public Cell<HB, TR> withValue(final double value) {
+    @SuppressWarnings("unchecked")
+    public TC withValue(final double value) {
         poiCell.setCellValue(value);
-        return this;
+        return (TC) this;
     }
 
-    public Cell<HB, TR> withValue(final BigDecimal value) {
+    @SuppressWarnings("unchecked")
+    public TC withValue(final BigDecimal value) {
         bigDecimalValue = value;
-        return this;
+        return (TC) this;
     }
 
-    public Cell<HB, TR> withValue(final BigInteger value) {
+    @SuppressWarnings("unchecked")
+    public TC withValue(final BigInteger value) {
         withValue(value.toString());
-        return this;
+        return (TC) this;
     }
 
     /**
@@ -118,7 +131,8 @@ final public class Cell<HB, TR extends Row<HB, TR>>
      * @param value
      * @return
      */
-    public Cell<HB, TR> withValue(final Object value) {
+    @SuppressWarnings("unchecked")
+    public TC withValue(final Object value) {
         if (value == null)
             throw new ReportBuilderException("Value cannot be null");
 
@@ -133,7 +147,7 @@ final public class Cell<HB, TR extends Row<HB, TR>>
         else
             throw new ReportBuilderException(format("Type is not supported: %s",
                     value.getClass().getName()));
-        return this;
+        return (TC) this;
     }
 
     /**
@@ -146,9 +160,10 @@ final public class Cell<HB, TR extends Row<HB, TR>>
      * @return this
      * @see ACellStyle#dataFormat(String)
      */
-    public Cell<HB, TR> useDecimalFormat() {
+    @SuppressWarnings("unchecked")
+    public TC useDecimalFormat() {
         decimalFormat = true;
-        return this;
+        return (TC) this;
     }
 
     private void valueWithDecimalFormat() {
@@ -162,7 +177,8 @@ final public class Cell<HB, TR extends Row<HB, TR>>
         else
             return;
 
-        if (cellStyle != null && cellStyle.cellStyle_p.getDataFormat() != 0) {
+        if (cellStyle != null
+            && cellStyle.cellStyle_p.getDataFormat() != null) {
             poiCell.setCellValue(number);
             return;
         }

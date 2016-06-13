@@ -38,7 +38,7 @@ import com.github.svrtm.xlreport.Row.RowOperation;
 /**
  * @author Artem.Smirnov
  */
-public abstract class ABuilder<HB, TR extends Row<HB, TR>> {
+public abstract class ABuilder<HB, TR extends Row<HB, TR, ?, ?>> {
     AHeader<?, ?> header;
     Class<?> rowClass;
 
@@ -72,7 +72,7 @@ public abstract class ABuilder<HB, TR extends Row<HB, TR>> {
      *
      * @author Artem.Smirnov
      */
-    public interface INewRow<HB, TR extends Row<HB, TR>> {
+    public interface INewRow<TR> {
         /**
          * @param row
          *            - new row
@@ -87,7 +87,6 @@ public abstract class ABuilder<HB, TR extends Row<HB, TR>> {
      * @return
      */
     public TR addNewRow() {
-        // return new Row<HB>(this);
         return newRowInstance();
     }
 
@@ -103,7 +102,6 @@ public abstract class ABuilder<HB, TR extends Row<HB, TR>> {
     @SuppressWarnings("unchecked")
     public HB addNewRowsWithEmptyCells(final int nRows, final int nCells) {
         for (int iRow = 0; iRow < nRows; iRow++) {
-            // final Row<HB> r = addNewRow();
             final TR r = addNewRow();
             for (int iCell = 0; iCell < nCells; iCell++)
                 r.prepareNewCell(iCell).createCell();
@@ -121,7 +119,6 @@ public abstract class ABuilder<HB, TR extends Row<HB, TR>> {
      * @return
      */
     public TR addRow(final int rowIndex) {
-        // return new Row<HB>(this, rowIndex, CREATE);
         return newRowInstance(rowIndex, CREATE);
     }
 
@@ -134,7 +131,7 @@ public abstract class ABuilder<HB, TR extends Row<HB, TR>> {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public HB addNewnRows(final int nRow, final INewRow<HB, TR> callback) {
+    public HB addNewnRows(final int nRow, final INewRow<TR> callback) {
         for (int i = 0; i < nRow; i++)
             callback.iRow(addNewRow());
         return (HB) this;
@@ -148,12 +145,10 @@ public abstract class ABuilder<HB, TR extends Row<HB, TR>> {
      * @return
      */
     public TR row(final int i) {
-        // return new Row<HB>(this, i, GET);
         return newRowInstance(i, GET);
     }
 
     TR rowOrCreateIfAbsent(final int i) {
-        // return new Row<HB>(this, i, CREATE_and_GET);
         return newRowInstance(i, CREATE_and_GET);
     }
 

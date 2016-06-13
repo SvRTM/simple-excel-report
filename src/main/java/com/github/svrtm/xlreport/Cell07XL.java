@@ -20,15 +20,17 @@ package com.github.svrtm.xlreport;
 /**
  * @author Artem.Smirnov
  */
-final public class Row07<HB>
-        extends Row<HB, Row07<HB>, Cell07<HB>, Cells07<HB>> {
+final public class Cell07XL<HB> extends Cell<HB, Row07XL<HB>, Cell07XL<HB>> {
 
-    Row07(final ABuilder<HB, Row07<HB>> aBuilder) {
-        super(aBuilder);
+    Cell07XL(final Row07XL<HB> row, final int i,
+             final CellOperation cellOperation) {
+        super(row, i, cellOperation);
     }
 
-    Row07(final ABuilder<HB, Row07<HB>> aBuilder, final int i,
-          final RowOperation rowOperation) {
-        super(aBuilder, i, rowOperation);
+    @SuppressWarnings("unchecked")
+    public CellStyle07XL<HB> prepareStyle() {
+        if (cellStyle == null)
+            cellStyle = new CellStyle07XL<HB>(this);
+        return (CellStyle07XL<HB>) cellStyle;
     }
 }

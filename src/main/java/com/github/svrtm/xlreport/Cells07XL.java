@@ -20,15 +20,23 @@ package com.github.svrtm.xlreport;
 /**
  * @author Artem.Smirnov
  */
-final public class Row07<HB>
-        extends Row<HB, Row07<HB>, Cell07<HB>, Cells07<HB>> {
+final public class Cells07XL<HB> extends Cells<HB, Row07XL<HB>, Cells07XL<HB>> {
 
-    Row07(final ABuilder<HB, Row07<HB>> aBuilder) {
-        super(aBuilder);
+    Cells07XL(final Row07XL<HB> row, final int[] indexesCells) {
+        super(row, indexesCells);
     }
 
-    Row07(final ABuilder<HB, Row07<HB>> aBuilder, final int i,
-          final RowOperation rowOperation) {
-        super(aBuilder, i, rowOperation);
+    /**
+     * Style is applied to cells without styles. Will be ignored by all of the
+     * cells with styles
+     *
+     * @return The object {@link CellsStyle97}
+     */
+    @SuppressWarnings("unchecked")
+    public CellsStyle07XL<HB> prepareStyle() {
+        if (cellStyle == null)
+            cellStyle = new CellsStyle07XL<HB>(this);
+        return (CellsStyle07XL<HB>) cellStyle;
     }
+
 }
