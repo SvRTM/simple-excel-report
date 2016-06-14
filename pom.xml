@@ -76,6 +76,9 @@
                     <archive>
                         <addMavenDescriptor>false</addMavenDescriptor>
                     </archive>
+                    <excludes>
+                        <exclude>META-INF/maven/**</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
