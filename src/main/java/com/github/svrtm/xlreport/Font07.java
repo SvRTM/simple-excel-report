@@ -37,7 +37,7 @@ public class Font07<TCS extends ACellStyle<?, ?, ?>> extends Font<TCS> {
 
     /**
      * Set the color for the font
-     * 
+     *
      * @param red
      * @param green
      * @param blue

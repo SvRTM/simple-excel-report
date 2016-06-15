@@ -17,6 +17,7 @@
  */
 package com.github.svrtm.xlreport;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -26,7 +27,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public final class Excel_2007 {
 
     final static public Body instanceBody(final Header header) {
-        header.init(new XSSFWorkbook(), -1, Row07.class);
+        header.init(new XSSFWorkbook(),
+                SpreadsheetVersion.EXCEL2007.getLastRowIndex(), Row07.class);
         header.prepareHeader();
         return new Body(header);
     }
