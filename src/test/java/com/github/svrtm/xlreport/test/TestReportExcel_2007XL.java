@@ -5,10 +5,10 @@ import java.io.FileOutputStream;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
-import com.github.svrtm.xlreport.ACellStyle.Alignment;
-import com.github.svrtm.xlreport.ACellStyle.FillPattern;
 import com.github.svrtm.xlreport.Cell.INewCell;
 import com.github.svrtm.xlreport.Cell07XL;
+import com.github.svrtm.xlreport.CellStyle.Alignment;
+import com.github.svrtm.xlreport.CellStyle.FillPattern;
 import com.github.svrtm.xlreport.Excel_2007XL;
 import com.github.svrtm.xlreport.Excel_2007XL.Body;
 import com.github.svrtm.xlreport.Excel_2007XL.Header;

@@ -6,10 +6,10 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
-import com.github.svrtm.xlreport.ACellStyle.Alignment;
-import com.github.svrtm.xlreport.ACellStyle.FillPattern;
 import com.github.svrtm.xlreport.Cell.INewCell;
 import com.github.svrtm.xlreport.Cell97;
+import com.github.svrtm.xlreport.CellStyle.Alignment;
+import com.github.svrtm.xlreport.CellStyle.FillPattern;
 import com.github.svrtm.xlreport.Excel_97;
 import com.github.svrtm.xlreport.Excel_97.Body;
 import com.github.svrtm.xlreport.Excel_97.Header;

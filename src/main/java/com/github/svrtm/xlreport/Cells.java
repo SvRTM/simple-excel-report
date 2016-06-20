@@ -27,7 +27,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 /**
  * @author Artem.Smirnov
  */
-public abstract class Cells<HB, TR extends Row<HB, TR, ?, TCs>, TCs extends Cells<HB, TR, TCs>>
+abstract class Cells<HB, TR extends Row<HB, TR, ?, TCs>, TCs extends Cells<HB, TR, TCs>>
         extends ACell<HB, TCs> {
     private int columnWidth = -1;
     private int incrementValue = -1;

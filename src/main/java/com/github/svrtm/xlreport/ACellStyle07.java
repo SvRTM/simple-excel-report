@@ -20,7 +20,7 @@ package com.github.svrtm.xlreport;
 /**
  * @author Artem.Smirnov
  */
-public abstract class ACellStyle07<TC extends ACell<?, ?>, TCS extends ACellStyle07<TC, TCS, TF>, TF extends Font<TCS>>
+abstract class ACellStyle07<TC extends ACell<?, ?>, TCS extends ACellStyle07<TC, TCS, TF>, TF extends Font<TCS>>
         extends ACellStyle<TC, TCS, TF> {
 
     ACellStyle07(final TC cell) {

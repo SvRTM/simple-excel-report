@@ -34,7 +34,7 @@ import com.github.svrtm.xlreport.Cell.INewCell;
 /**
  * @author Artem.Smirnov
  */
-public abstract class Row<HB, TR extends Row<HB, TR, TC, TCs>, TC extends Cell<HB, TR, TC>, TCs extends Cells<HB, TR, TCs>> {
+abstract class Row<HB, TR extends Row<HB, TR, TC, TCs>, TC extends Cell<HB, TR, TC>, TCs extends Cells<HB, TR, TCs>> {
     ABuilder<HB, TR> builder;
     org.apache.poi.ss.usermodel.Row poiRow;
 

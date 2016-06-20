@@ -17,9 +17,8 @@
  */
 package com.github.svrtm.xlreport;
 
-import static com.github.svrtm.xlreport.ACellStyle.Alignment.CENTER;
-import static com.github.svrtm.xlreport.ACellStyle.Alignment.VERTICAL_CENTER;
-import static org.apache.poi.ss.usermodel.CellStyle.ALIGN_LEFT;
+import static com.github.svrtm.xlreport.CellStyle.Alignment.CENTER;
+import static com.github.svrtm.xlreport.CellStyle.Alignment.VERTICAL_CENTER;
 import static org.apache.poi.ss.usermodel.CellStyle.BORDER_THIN;
 import static org.apache.poi.ss.usermodel.IndexedColors.BLACK;
 
@@ -35,83 +34,14 @@ import com.github.svrtm.xlreport.Font.Boldweight;
 /**
  * @author Artem.Smirnov
  */
-public abstract class ACellStyle<TC extends ACell<?, ?>, TCS extends ACellStyle<TC, TCS, TF>, TF extends Font<TCS>> {
+abstract class ACellStyle<TC extends ACell<?, ?>, TCS extends ACellStyle<TC, TCS, TF>, TF extends Font<TCS>>
+        implements com.github.svrtm.xlreport.CellStyle {
     final TC cell;
     final ABuilder<?, ?> builder;
 
     final Workbook wb;
 
     final CellStyle_p cellStyle_p;
-
-    public enum Alignment {
-        /** */
-        CENTER(CellStyle.ALIGN_CENTER, AlignmentType.H),
-        /** */
-        RIGHT(CellStyle.ALIGN_RIGHT, AlignmentType.H),
-        /** */
-        LEFT(ALIGN_LEFT, AlignmentType.H),
-        /** */
-        VERTICAL_CENTER(CellStyle.VERTICAL_CENTER, AlignmentType.V);
-
-        private enum AlignmentType {
-            H, V
-        };
-
-        short idx;
-        private AlignmentType alignmentType;
-
-        private Alignment(final short idx, final AlignmentType alignmentType) {
-            this.idx = idx;
-            this.alignmentType = alignmentType;
-        }
-
-        public AlignmentType getAlignmentType() {
-            return alignmentType;
-        }
-    }
-
-    public enum FillPattern {
-        /** */
-        NO_FILL(CellStyle.NO_FILL),
-        /** */
-        SOLID_FOREGROUND(CellStyle.SOLID_FOREGROUND),
-        /** */
-        FINE_DOTS(CellStyle.FINE_DOTS),
-        /** */
-        ALT_BARS(CellStyle.ALT_BARS),
-        /** */
-        SPARSE_DOTS(CellStyle.SPARSE_DOTS),
-        /** */
-        THICK_HORZ_BANDS(CellStyle.THICK_HORZ_BANDS),
-        /** */
-        THICK_VERT_BANDS(CellStyle.THICK_VERT_BANDS),
-        /** */
-        THICK_BACKWARD_DIAG(CellStyle.THICK_BACKWARD_DIAG),
-        /** */
-        THICK_FORWARD_DIAG(CellStyle.THICK_FORWARD_DIAG),
-        /** */
-        BIG_SPOTS(CellStyle.BIG_SPOTS),
-        /** */
-        BRICKS(CellStyle.BRICKS),
-        /** */
-        THIN_HORZ_BANDS(CellStyle.THIN_HORZ_BANDS),
-        /** */
-        THIN_VERT_BANDS(CellStyle.THIN_VERT_BANDS),
-        /** */
-        THIN_BACKWARD_DIAG(CellStyle.THIN_BACKWARD_DIAG),
-        /** */
-        THIN_FORWARD_DIAG(CellStyle.THIN_FORWARD_DIAG),
-        /** */
-        SQUARES(CellStyle.SQUARES),
-        /** */
-        DIAMONDS(CellStyle.DIAMONDS);
-
-        short idx;
-
-        private FillPattern(final short idx) {
-            this.idx = idx;
-        }
-    }
 
     ACellStyle(final TC cell) {
         this.cell = cell;

@@ -38,7 +38,7 @@ import com.github.svrtm.xlreport.Row.RowOperation;
 /**
  * @author Artem.Smirnov
  */
-public abstract class ABuilder<HB, TR extends Row<HB, TR, ?, ?>> {
+abstract class ABuilder<HB, TR extends Row<HB, TR, ?, ?>> {
     AHeader<?, ?> header;
     Class<?> rowClass;
 

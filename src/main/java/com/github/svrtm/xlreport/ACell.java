@@ -26,7 +26,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 /**
  * @author Artem.Smirnov
  */
-public abstract class ACell<HB, TC extends ACell<HB, TC>> {
+abstract class ACell<HB, TC extends ACell<HB, TC>> {
     private static int AUTOSIZE_MIN_LENGTH = 7;
 
     final Row<HB, ?, ?, ?> row;
