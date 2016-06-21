@@ -206,6 +206,7 @@ public class TestReportExcel_97 {
                             .addFont()
                                 .heightInPoints((short) 18)
                                 .color(IndexedColors.DARK_RED)
+                                .name("Arial Black")
                             .configureFont()
                         .createStyle()
                     .createCell()

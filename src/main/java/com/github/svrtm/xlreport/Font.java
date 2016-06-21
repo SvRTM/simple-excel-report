@@ -74,6 +74,11 @@ public class Font<TCS extends ACellStyle<?, ?, ?>> {
         return this;
     }
 
+    public Font<TCS> name(final String name) {
+        font_p.setName(name);
+        return this;
+    }
+
     private org.apache.poi.ss.usermodel.Font getFont() {
         org.apache.poi.ss.usermodel.Font poiFont;
         poiFont = builder.cacheFont.get(font_p);

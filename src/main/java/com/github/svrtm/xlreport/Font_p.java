@@ -29,6 +29,7 @@ final class Font_p {
     private XSSFColor xssfColor;
     private Boolean italic;
     private Short boldweight;
+    private String name;
 
     /**
      * @param fontHeightInPoints
@@ -72,6 +73,16 @@ final class Font_p {
         this.boldweight = boldweight;
     }
 
+    /**
+     * set the name for the font (i.e. Arial).
+     *
+     * @param name
+     *            - value representing the name of the font to use
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
+
     /*
      * (non-Javadoc)
      * @see java.lang.Object#hashCode()
@@ -87,6 +98,7 @@ final class Font_p {
                  + (fontHeightInPoints == null ? 0
                                                : fontHeightInPoints.hashCode());
         result = prime * result + (italic == null ? 0 : italic.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
         result =
                prime * result + (xssfColor == null ? 0 : xssfColor.hashCode());
         return result;
@@ -129,6 +141,12 @@ final class Font_p {
         }
         else if (!italic.equals(other.italic))
             return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        }
+        else if (!name.equals(other.name))
+            return false;
         if (xssfColor == null) {
             if (other.xssfColor != null)
                 return false;
@@ -151,5 +169,8 @@ final class Font_p {
             poiFont.setItalic(italic);
         if (boldweight != null)
             poiFont.setBoldweight(boldweight);
+        if (name != null)
+            poiFont.setFontName(name);
     }
+
 }
