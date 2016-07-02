@@ -50,7 +50,7 @@ abstract class ACellStyle07<TC extends ACell<?, ?>, TCS extends ACellStyle07<TC,
      *
      * @param fgRgb
      *            Sets the Red Green Blue or Alpha Red Green Blue
-     * @return
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public TCS fillForegroundColor(final byte[] fgRgb) {
@@ -64,7 +64,7 @@ abstract class ACellStyle07<TC extends ACell<?, ?>, TCS extends ACellStyle07<TC,
      * @param red
      * @param green
      * @param blue
-     * @return
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public TCS fillForegroundColor(final byte red, final byte green,

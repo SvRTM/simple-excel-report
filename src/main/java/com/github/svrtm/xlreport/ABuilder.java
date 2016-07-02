@@ -81,23 +81,28 @@ abstract class ABuilder<HB, TR extends Row<HB, TR, ?, ?>> {
     }
 
     /**
+     * Create a new row.
      * The index of a new row is the number of the last row on the sheet
-     * plus 1
+     * plus 1.
      *
-     * @return
+     * @return a new instance of the class of implementation <code>Row</code>.
+     * @see com.github.svrtm.xlreport.Row
+     * @see com.github.svrtm.xlreport.Row97
+     * @see com.github.svrtm.xlreport.Row07
+     * @see com.github.svrtm.xlreport.Row07XL
      */
     public TR addNewRow() {
         return newRowInstance();
     }
 
     /**
-     * Create a new rows with empty cells
+     * Create a new rows with empty cells.
      *
      * @param nRows
      *            - number of new created rows
      * @param nCells
      *            - number of new empty cells
-     * @return
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public HB addNewRowsWithEmptyCells(final int nRows, final int nCells) {
@@ -112,11 +117,15 @@ abstract class ABuilder<HB, TR extends Row<HB, TR, ?, ?>> {
 
     /**
      * Create a new row within the sheet and return the high level
-     * representation
+     * representation.
      *
      * @param rowIndex
      *            - logical row
-     * @return
+     * @return a new instance of the class of implementation <code>Row</code>.
+     * @see com.github.svrtm.xlreport.Row
+     * @see com.github.svrtm.xlreport.Row97
+     * @see com.github.svrtm.xlreport.Row07
+     * @see com.github.svrtm.xlreport.Row07XL
      */
     public TR addRow(final int rowIndex) {
         return newRowInstance(rowIndex, CREATE);
@@ -128,7 +137,7 @@ abstract class ABuilder<HB, TR extends Row<HB, TR, ?, ?>> {
      * @param nRow
      *            - number of new created rows
      * @param callback
-     * @return
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public HB addNewnRows(final int nRow, final INewRow<TR> callback) {
@@ -138,11 +147,15 @@ abstract class ABuilder<HB, TR extends Row<HB, TR, ?, ?>> {
     }
 
     /**
-     * Returns the row 0-based
+     * Returns the row 0-based.
      *
      * @param i
-     *            - row to get
-     * @return
+     *            - row to get.
+     * @return an instance of the class of implementation <code>Row</code>.
+     * @see com.github.svrtm.xlreport.Row
+     * @see com.github.svrtm.xlreport.Row97
+     * @see com.github.svrtm.xlreport.Row07
+     * @see com.github.svrtm.xlreport.Row07XL
      */
     public TR row(final int i) {
         return newRowInstance(i, GET);
@@ -154,9 +167,9 @@ abstract class ABuilder<HB, TR extends Row<HB, TR, ?, ?>> {
 
     /**
      * Returns the number of physically defined rows (NOT the number of rows
-     * in the sheet)
+     * in the sheet).
      *
-     * @return the number of physically defined rows in this sheet
+     * @return the number of physically defined rows in this sheet.
      */
     public int indexOfLastRow() {
         return sheet.getPhysicalNumberOfRows();
@@ -166,16 +179,22 @@ abstract class ABuilder<HB, TR extends Row<HB, TR, ?, ?>> {
      * Adds a merged region of cells (hence those cells form one)
      *
      * @param firstRow
+     *            Index of first row
      * @param lastRow
+     *            Index of last row (inclusive), must be equal to or larger than
+     *            {@code firstRow}
      * @param firstCol
+     *            Index of first column
      * @param lastCol
-     * @return
+     *            Index of last column (inclusive), must be equal to or larger
+     *            than {@code firstCol}
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public HB mergedRegion(final int firstRow, final int lastRow,
                            final int firstCol, final int lastCol) {
         if (regionsList == null)
-            regionsList = new ArrayList<CellRangeAddress>();
+            regionsList = new ArrayList<CellRangeAddress>(1);
 
         CellRangeAddress region;
         region = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
@@ -191,7 +210,7 @@ abstract class ABuilder<HB, TR extends Row<HB, TR, ?, ?>> {
      *            - the column to set (0-based)
      * @param width
      *            - the width
-     * @return
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public HB iColumnWidthIs(final int columnIndex, final int width) {
@@ -204,7 +223,7 @@ abstract class ABuilder<HB, TR extends Row<HB, TR, ?, ?>> {
      *
      * @param widthColumns
      *            - [columnIndex, width]
-     * @return
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public HB columnWidths(final int widthColumns[][]) {
@@ -214,6 +233,14 @@ abstract class ABuilder<HB, TR extends Row<HB, TR, ?, ?>> {
         return (HB) this;
     }
 
+    /**
+     * This process can be relatively slow on large sheets, so this should
+     * normally only be called once per column, at the end of your processing.
+     *
+     * @param column
+     *            the column index
+     * @return this
+     */
     @SuppressWarnings("unchecked")
     public HB withAutoSizeColumn(final int column) {
         sheet.autoSizeColumn(column);

@@ -27,6 +27,12 @@ final public class Cell97<HB> extends Cell<HB, Row97<HB>, Cell97<HB>> {
         super(row, i, cellOperation);
     }
 
+    /**
+     * Prepare style for the current Cell.
+     *
+     * @return an instance of the class <code>CellStyle97</code>.
+     * @see com.github.svrtm.xlreport.CellStyle97
+     */
     @SuppressWarnings("unchecked")
     public CellStyle97<HB> prepareStyle() {
         if (cellStyle == null)

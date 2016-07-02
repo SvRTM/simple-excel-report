@@ -51,6 +51,14 @@ abstract class ACellStyle<TC extends ACell<?, ?>, TCS extends ACellStyle<TC, TCS
         cellStyle_p = new CellStyle_p();
     }
 
+    /**
+     * Finalization of the implementation of the class <code>CellStyle</code>
+     *
+     * @return an instance of the implementation of the class <code>Cell</code>
+     * @see com.github.svrtm.xlreport.Cell97#prepareStyle()
+     * @see com.github.svrtm.xlreport.Cell07#prepareStyle()
+     * @see com.github.svrtm.xlreport.Cell07XL#prepareStyle()
+     */
     public abstract TC createStyle();
 
     CellStyle getStyle() {
@@ -70,6 +78,13 @@ abstract class ACellStyle<TC extends ACell<?, ?>, TCS extends ACellStyle<TC, TCS
         return poiStyle;
     }
 
+    /**
+     * Set the alignment for the cell.
+     *
+     * @param alignment
+     *            the type of alignment
+     * @return this
+     */
     @SuppressWarnings("unchecked")
     public TCS alignment(final Alignment alignment) {
         if (Alignment.AlignmentType.V == alignment.getAlignmentType())
@@ -83,7 +98,7 @@ abstract class ACellStyle<TC extends ACell<?, ?>, TCS extends ACellStyle<TC, TCS
     /**
      * Edging of a cell of black color
      *
-     * @return
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public TCS defaultEdging() {
@@ -99,24 +114,59 @@ abstract class ACellStyle<TC extends ACell<?, ?>, TCS extends ACellStyle<TC, TCS
         return (TCS) this;
     }
 
+    /**
+     * Set text wrapping
+     *
+     * @return this
+     */
     @SuppressWarnings("unchecked")
     public TCS wrapText() {
         cellStyle_p.setWrapText(true);
         return (TCS) this;
     }
 
+    /**
+     * This element is used to specify cell fill information for pattern and
+     * solid color cell fills.
+     * For solid cell fills (no pattern), foreground color is used.
+     * For cell fills with patterns specified, then the cell fill color is
+     * specified by the background color.
+     *
+     * @see com.github.svrtm.xlreport.CellStyle.FillPattern
+     * @see #fillForegroundColor(IndexedColors)
+     * @param fp
+     *            the fill pattern to use (set to
+     *            {@link com.github.svrtm.xlreport.CellStyle.FillPattern#SOLID_FOREGROUND}
+     *            to fill w/foreground color)
+     * @return this
+     */
     @SuppressWarnings("unchecked")
     public TCS fillPattern(final FillPattern fp) {
         cellStyle_p.setFillPattern(fp.idx);
         return (TCS) this;
     }
 
+    /**
+     * Set the foreground fill color as a indexed color value
+     *
+     * @param color
+     *            - indexed color to use
+     * @return this
+     * @see org.apache.poi.ss.usermodel.IndexedColors
+     */
     @SuppressWarnings("unchecked")
     public TCS fillForegroundColor(final IndexedColors color) {
         cellStyle_p.setFillForegroundColor(color.index);
         return (TCS) this;
     }
 
+    /**
+     * Set the data format
+     *
+     * @param format
+     *            string matching a built in format
+     * @return this
+     */
     @SuppressWarnings("unchecked")
     public TCS dataFormat(final String format) {
         Short fmt = builder.cacheDataFormat.get(format);
@@ -129,6 +179,13 @@ abstract class ACellStyle<TC extends ACell<?, ?>, TCS extends ACellStyle<TC, TCS
         return (TCS) this;
     }
 
+    /**
+     * Add a font for the current style.
+     *
+     * @return a new instance of the class of implementation <code>Font</code>
+     * @see com.github.svrtm.xlreport.Font
+     * @see com.github.svrtm.xlreport.Font07
+     */
     @SuppressWarnings("unchecked")
     public TF addFont() {
         final ParameterizedType pt = (ParameterizedType) getClass()
@@ -153,7 +210,7 @@ abstract class ACellStyle<TC extends ACell<?, ?>, TCS extends ACellStyle<TC, TCS
      * edging of a cell of black color
      * font size of 11pt, bold weight
      *
-     * @return
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public TCS title() {
@@ -175,7 +232,7 @@ abstract class ACellStyle<TC extends ACell<?, ?>, TCS extends ACellStyle<TC, TCS
      * edging of a cell of black color
      * font size of 10pt, bold weight, black color
      *
-     * @return
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public TCS header() {
@@ -218,7 +275,7 @@ abstract class ACellStyle<TC extends ACell<?, ?>, TCS extends ACellStyle<TC, TCS
      * edging of a cell of black color
      * font size of 10pt, bold weight, black color, italic
      *
-     * @return
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public TCS total() {

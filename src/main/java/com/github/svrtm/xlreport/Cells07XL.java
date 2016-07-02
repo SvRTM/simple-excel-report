@@ -27,10 +27,12 @@ final public class Cells07XL<HB> extends Cells<HB, Row07XL<HB>, Cells07XL<HB>> {
     }
 
     /**
+     * Prepare style for group of cells.
      * Style is applied to cells without styles. Will be ignored by all of the
      * cells with styles
      *
-     * @return The object {@link CellsStyle97}
+     * @return an instance of the class <code>CellsStyle07XL</code>.
+     * @see com.github.svrtm.xlreport.CellsStyle07XL
      */
     @SuppressWarnings("unchecked")
     public CellsStyle07XL<HB> prepareStyle() {

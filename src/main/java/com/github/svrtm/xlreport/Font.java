@@ -29,9 +29,9 @@ public class Font<TCS extends ACellStyle<?, ?, ?>> {
     final Font_p font_p;
 
     public enum Boldweight {
-        /** */
+        /** Normal boldness (not bold) */
         NORMAL(org.apache.poi.ss.usermodel.Font.BOLDWEIGHT_NORMAL),
-        /** */
+        /** Bold boldness (bold) */
         BOLD(org.apache.poi.ss.usermodel.Font.BOLDWEIGHT_BOLD);
 
         short idx;
@@ -47,39 +47,90 @@ public class Font<TCS extends ACellStyle<?, ?, ?>> {
         font_p = new Font_p();
     }
 
+    /**
+     * Creates a new prepared font
+     *
+     * @return implementation of <code>CellStyle</code>
+     */
+
+    /**
+     * Finalization of the implementation <code>Font</code>.
+     *
+     * @return an instance of the implementation <code>ACellStyle</code>
+     * @see com.github.svrtm.xlreport.ACellStyle#addFont()
+     */
     public TCS configureFont() {
-        getFont();
+        generatePoiFont();
         cellStyle.cellStyle_p.font_p = font_p;
 
         return cellStyle;
     }
 
+    /**
+     * Set the font height in points.
+     *
+     * @param height
+     *            - height in the familiar unit of measure - points
+     * @return this
+     */
     public Font<TCS> heightInPoints(final short height) {
         font_p.setFontHeightInPoints(height);
         return this;
     }
 
+    /**
+     * Set the indexed color for the font
+     *
+     * @param color
+     *            - indexed color to use
+     * @return this
+     * @see org.apache.poi.ss.usermodel.IndexedColors
+     */
     public Font<TCS> color(final IndexedColors color) {
         font_p.setColor(color.index);
         return this;
     }
 
+    /**
+     * Set the italic to use
+     *
+     * @return this
+     */
     public Font<TCS> italic() {
         font_p.setItalic(true);
         return this;
     }
 
+    /**
+     * Set the boldness to use
+     *
+     * @param boldweight
+     * @return this
+     */
     public Font<TCS> boldweight(final Boldweight boldweight) {
         font_p.setBoldweight(boldweight.idx);
         return this;
     }
 
+    /**
+     * Set the name for the font (i.e. Arial).
+     *
+     * @param name
+     *            String representing the name of the font to use
+     * @return
+     */
     public Font<TCS> name(final String name) {
         font_p.setName(name);
         return this;
     }
 
-    private org.apache.poi.ss.usermodel.Font getFont() {
+    /**
+     * Creates a new font if the prepared font with the given attributes is
+     * missing in the cache and saves in cache or returns the font from cache.
+     *
+     * @return Apache POI excel font
+     */
+    private org.apache.poi.ss.usermodel.Font generatePoiFont() {
         org.apache.poi.ss.usermodel.Font poiFont;
         poiFont = builder.cacheFont.get(font_p);
         if (poiFont == null) {

@@ -68,28 +68,40 @@ abstract class Row<HB, TR extends Row<HB, TR, TC, TCs>, TC extends Cell<HB, TR, 
                             i));
     }
 
+    /**
+     * Finalization of the implementation <code>Row</code>.
+     *
+     * @return
+     * @see com.github.svrtm.xlreport.ABuilder#addRow(int)
+     * @see com.github.svrtm.xlreport.ABuilder#addNewRow()
+     * @see com.github.svrtm.xlreport.ABuilder#addNewRowsWithEmptyCells(int,
+     *      int)
+     * @see com.github.svrtm.xlreport.ABuilder#addNewnRows(int,
+     *      com.github.svrtm.xlreport.ABuilder.INewRow)
+     */
     @SuppressWarnings("unchecked")
     public HB configureRow() {
         return (HB) builder;
     }
 
     /**
-     * Get the cell representing a given column (logical cell) 0-based
+     * Get the cell representing a given column (logical cell) 0-based.
      *
      * @param i
-     *            - 0 based column number
-     * @return
+     *            - 0 based column number.
+     * @return an instance of the implementation class <code>Cell</code>.
      */
     public TC cell(final int i) {
         return createCell(i, CellOperation.GET);
     }
 
     /**
-     * Returns a cell if was absent creates it
+     * Returns a cell if was absent creates it.
      *
      * @param i
      *            - 0 based column number
-     * @return
+     * @return an instance or a new instance, if a cell is absent, of the
+     *         implementation class <code>Cell</code>.
      */
     public TC cellOrCreateIfAbsent(final int i) {
         return createCell(i, CellOperation.CREATE_and_GET);
@@ -100,7 +112,7 @@ abstract class Row<HB, TR extends Row<HB, TR, TC, TCs>, TC extends Cell<HB, TR, 
      *
      * @param i
      *            - the column number this cell represents
-     * @return
+     * @return a new instance of the implementation class <code>Cell</code>.
      */
     public TC prepareNewCell(final int i) {
         return createCell(i, CellOperation.CREATE);
@@ -108,12 +120,12 @@ abstract class Row<HB, TR extends Row<HB, TR, TC, TCs>, TC extends Cell<HB, TR, 
 
     /**
      * Addition of new cells in the current row <br>
-     * Method call <b>buildCell</b> is not necessary.
+     * Method call <b>createCell</b> is not necessary.
      *
      * @param firstCell
      * @param lastCell
      * @param callback
-     * @return
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public TR addAndConfigureCells(final int firstCell, final int lastCell,
@@ -130,7 +142,7 @@ abstract class Row<HB, TR extends Row<HB, TR, TC, TCs>, TC extends Cell<HB, TR, 
      * @param callback
      * @param indexesCells
      *            indexes of cells
-     * @return
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public TR addAndConfigureCells(final INewCell<TC> callback,
@@ -141,23 +153,29 @@ abstract class Row<HB, TR extends Row<HB, TR, TC, TCs>, TC extends Cell<HB, TR, 
     }
 
     /**
-     * Create new cells within the row
+     * Create new cells within the row.
      *
      * @param indexesCells
      *            - the column numbers
-     * @return
-     */
-    /**
-     * Create new cells within the row
-     *
-     * @param indexesCells
-     *            - the column numbers
-     * @return
+     * @return a new instance of the class of implementation <code>Cells</code>
+     * @see com.github.svrtm.xlreport.CellsStyle97
+     * @see com.github.svrtm.xlreport.CellsStyle07
+     * @see com.github.svrtm.xlreport.CellsStyle07XL
      */
     public TCs addCells(final int... indexesCells) {
         return createCells(indexesCells);
     }
 
+    /**
+     * Create new cells within the row.
+     *
+     * @param n
+     *            the number of new cells.
+     * @return a new instance of the class of implementation <code>Cells</code>
+     * @see com.github.svrtm.xlreport.CellsStyle97
+     * @see com.github.svrtm.xlreport.CellsStyle07
+     * @see com.github.svrtm.xlreport.CellsStyle07XL
+     */
     public TCs addCells(final int n) {
         final int[] indexesCells = new int[n];
         for (int i = 0; i < n; i++)
@@ -166,6 +184,14 @@ abstract class Row<HB, TR extends Row<HB, TR, TC, TCs>, TC extends Cell<HB, TR, 
         return createCells(indexesCells);
     }
 
+    /**
+     * Create a new instance of the class of implementation <code>Cells</code>
+     * from added cells.
+     *
+     * @return a new instance of the class of implementation <code>Cells</code>
+     * @see com.github.svrtm.xlreport.Row#prepareNewCell(int)
+     * @see com.github.svrtm.xlreport.Cell#createCell()
+     */
     public TCs cells() {
         final Set<Integer> keys = cells.keySet();
         if (keys.size() == 0)

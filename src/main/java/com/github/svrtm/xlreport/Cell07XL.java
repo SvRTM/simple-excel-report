@@ -27,6 +27,12 @@ final public class Cell07XL<HB> extends Cell<HB, Row07XL<HB>, Cell07XL<HB>> {
         super(row, i, cellOperation);
     }
 
+    /**
+     * Prepare style for the current Cell.
+     *
+     * @return an instance of the class <code>CellStyle07XL</code>.
+     * @see com.github.svrtm.xlreport.CellStyle07XL
+     */
     @SuppressWarnings("unchecked")
     public CellStyle07XL<HB> prepareStyle() {
         if (cellStyle == null)

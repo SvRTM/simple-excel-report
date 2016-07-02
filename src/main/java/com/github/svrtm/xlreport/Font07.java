@@ -18,6 +18,9 @@
 package com.github.svrtm.xlreport;
 
 /**
+ * <code>Font07</code> used for <code>XSSF (Excel_2007)</code> and
+ * <code>SXSSF (Excel_2007XL)</code>
+ *
  * @author Artem.Smirnov
  */
 public class Font07<TCS extends ACellStyle<?, ?, ?>> extends Font<TCS> {
@@ -29,6 +32,9 @@ public class Font07<TCS extends ACellStyle<?, ?, ?>> extends Font<TCS> {
     /**
      * Set the color for the font in Standard Alpha Red Green Blue (ARGB or RGB)
      * color value
+     *
+     * @param rgb
+     * @return this
      */
     public Font<TCS> color(final byte[] rgb) {
         font_p.setColor(rgb);
@@ -41,7 +47,7 @@ public class Font07<TCS extends ACellStyle<?, ?, ?>> extends Font<TCS> {
      * @param red
      * @param green
      * @param blue
-     * @return
+     * @return this
      */
     public Font<TCS> color(final byte red, final byte green, final byte blue) {
         font_p.setColor(new byte[] { red, green, blue });

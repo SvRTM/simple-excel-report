@@ -71,6 +71,12 @@ public abstract class Cell<HB, TR extends Row<HB, TR, TC, ?>, TC extends Cell<HB
                                                    : poiRow.getCell(i);
     }
 
+    /**
+     * Finalization of the implementation <code>Cell</code>.
+     *
+     * @return an instance of the implementation <code>Row</code>
+     * @see com.github.svrtm.xlreport.Row#prepareNewCell(int)
+     */
     @SuppressWarnings("unchecked")
     public TR createCell() {
         if (decimalFormat)
@@ -83,42 +89,106 @@ public abstract class Cell<HB, TR extends Row<HB, TR, TC, ?>, TC extends Cell<HB
         return (TR) row;
     }
 
+    /**
+     * Set a string value for the cell.
+     *
+     * @param value
+     *            value to set the cell to. For formulas we'll set the formula
+     *            string, for String cells we'll set its value. For other types
+     *            we will change the cell to a string cell and set its value. If
+     *            value is null then we will change the cell to a Blank cell.
+     * @return this
+     */
     @SuppressWarnings("unchecked")
     public TC withValue(final String value) {
         poiCell.setCellValue(value);
         return (TC) this;
     }
 
+    /**
+     * Set a string value for the cell.
+     *
+     * @param value
+     *            value to set the cell to. For formulas we'll set the
+     *            'pre-evaluated result string, for String cells we'll set its
+     *            value. For other types we will change the cell to a string
+     *            cell and set its value. If value is null then we will change
+     *            the cell to a Blank cell.
+     * @return this
+     */
     @SuppressWarnings("unchecked")
     public TC withRichText(final String value) {
         poiCell.setCellValue(creationHelper.createRichTextString(value));
         return (TC) this;
     }
 
+    /**
+     * Set a rich string value for the cell.
+     *
+     * @param value
+     *            value to set the cell to. For formulas we'll set the formula
+     *            string, for String cells we'll set its value. For other types
+     *            we will change the cell to a string cell and set its value. If
+     *            value is null then we will change the cell to a Blank cell.
+     * @return this
+     */
     @SuppressWarnings("unchecked")
     public TC withRichText(final RichTextString value) {
         poiCell.setCellValue(value);
         return (TC) this;
     }
 
+    /**
+     * Set a numeric value for the cell.
+     * Converts integer to a double.
+     *
+     * @param value
+     * @return this
+     */
     @SuppressWarnings("unchecked")
     public TC withValue(final int value) {
         poiCell.setCellValue(value);
         return (TC) this;
     }
 
+    /**
+     * Set a numeric value for the cell.
+     *
+     * @param value
+     *            the numeric value to set this cell to. For formulas we'll set
+     *            the precalculated value, for numerics we'll set its value. For
+     *            other types we will change the cell to a numeric cell and set
+     *            its value.
+     * @return this
+     */
     @SuppressWarnings("unchecked")
     public TC withValue(final double value) {
         poiCell.setCellValue(value);
         return (TC) this;
     }
 
+    /**
+     * Set a numeric value for the cell.
+     * Sets the scale of BigDecimal to value in 2 and sets the mode of rounding
+     * RoundingMode.Down. The BigDecimal converted to a double.
+     *
+     * @param value
+     * @return this
+     */
     @SuppressWarnings("unchecked")
     public TC withValue(final BigDecimal value) {
         bigDecimalValue = value;
         return (TC) this;
     }
 
+    /**
+     * Set a string value for the cell.
+     * Converts the numeric value of the BigInteger to its equivalent string
+     * representation.
+     *
+     * @param value
+     * @return this
+     */
     @SuppressWarnings("unchecked")
     public TC withValue(final BigInteger value) {
         withValue(value.toString());
@@ -126,10 +196,16 @@ public abstract class Cell<HB, TR extends Row<HB, TR, TC, ?>, TC extends Cell<HB
     }
 
     /**
-     * The value can be of type String, Long, BigDecimal or BigInteger
+     * The value can be of type String, Double, Integer, Long, BigDecimal or
+     * BigInteger.
      *
      * @param value
-     * @return
+     * @return this
+     * @see com.github.svrtm.xlreport.Cell#withRichText(String)
+     * @see com.github.svrtm.xlreport.Cell#withValue(double)
+     * @see com.github.svrtm.xlreport.Cell#withValue(int)
+     * @see com.github.svrtm.xlreport.Cell#withValue(BigDecimal)
+     * @see com.github.svrtm.xlreport.Cell#withValue(BigInteger)
      */
     @SuppressWarnings("unchecked")
     public TC withValue(final Object value) {
@@ -138,6 +214,10 @@ public abstract class Cell<HB, TR extends Row<HB, TR, TC, ?>, TC extends Cell<HB
 
         else if (value instanceof String)
             withValue((String) value);
+        else if (value instanceof Double)
+            withValue(((Double) value).doubleValue());
+        else if (value instanceof Integer)
+            withValue(((Integer) value).intValue());
         else if (value instanceof Long)
             withValue(((Long) value).longValue());
         else if (value instanceof BigDecimal)
@@ -151,11 +231,12 @@ public abstract class Cell<HB, TR extends Row<HB, TR, TC, ?>, TC extends Cell<HB
     }
 
     /**
-     * Specialization of format
+     * Specialization of format.
      * <p>
      * Cell will be of type <b>String</b> with fixed number of decimal places
      * (use a pattern "0.00").<br/>
-     * Or the <b>Number</b> type if is used by ACellStyle#dataFormat
+     * Or the <b>Number</b> type if is used by
+     * {@link ACellStyle#dataFormat(String)}.
      *
      * @return this
      * @see ACellStyle#dataFormat(String)

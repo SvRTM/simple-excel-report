@@ -75,7 +75,7 @@ abstract class ACell<HB, TC extends ACell<HB, TC>> {
      * This process can be relatively slow on large sheets, so this should
      * normally only be called once per column, at the end of your processing.
      *
-     * @return
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public TC useAutoSizeColumn() {

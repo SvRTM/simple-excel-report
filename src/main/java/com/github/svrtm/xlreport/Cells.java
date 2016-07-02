@@ -38,6 +38,13 @@ abstract class Cells<HB, TR extends Row<HB, TR, ?, TCs>, TCs extends Cells<HB, T
         this.indexesCells = indexesCells;
     }
 
+    /**
+     * Finalization of the implementation <code>Cells</code>.
+     *
+     * @return an instance of the implementation <code>Row</code>
+     * @see com.github.svrtm.xlreport.Row#addCells(int)
+     * @see com.github.svrtm.xlreport.Row#addCells(int...)
+     */
     @SuppressWarnings("unchecked")
     public TR configureCells() {
         if (columnWidth == -1 && incrementValue == -1 && cellStyle == null)
@@ -78,12 +85,27 @@ abstract class Cells<HB, TR extends Row<HB, TR, ?, TCs>, TCs extends Cells<HB, T
         return (TR) row;
     }
 
+    /**
+     * Set the width
+     *
+     * @param columnWidth
+     *            - the width
+     * @return this
+     */
     @SuppressWarnings("unchecked")
     public TCs whereColumnWidthIs(final int columnWidth) {
         this.columnWidth = columnWidth * 256;
         return (TCs) this;
     }
 
+    /**
+     * Set starting value and an auto increment (auto increment by one) for a
+     * cell and the subsequent cells.
+     *
+     * @param start
+     *            - starting number (0-based)
+     * @return this
+     */
     @SuppressWarnings("unchecked")
     public TCs withInitialValueOfIncrement(final int start) {
         incrementValue = start;
